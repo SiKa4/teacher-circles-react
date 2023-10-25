@@ -1,12 +1,18 @@
 import styled, {css, keyframes} from "styled-components";
 import {FormEvent, useEffect, useState} from "react";
 import {strings} from "../assets/strings/strings.ts";
-import {singIn1, singIn2, singIn3} from "../assets/img.ts";
+import {iconCheckError, singIn1, singIn2, singIn3} from "../assets/img.ts";
+import {ModalMessageWindow} from "../components/modal_windows/ModalMessageWindow.tsx";
+import {useNavigate} from "react-router-dom";
+import {useCookies} from "react-cookie";
 
 export function Registration() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isOpenModal, setOpenModal] = useState(false);
+    const navigate = useNavigate();
+    const [, setCookie] = useCookies(["user"]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -20,12 +26,18 @@ export function Registration() {
 
     const handleLogin = (e: FormEvent) => {
         e.preventDefault();
-        console.log(`Попытка входа: ${username}, ${password}`);
+
+        if(username == "" && password == ""){
+            setOpenModal(true);
+            return;
+        }
+
+        navigate("/main", {replace: true});
+        setCookie("user", "2", { path: "/" });
     };
 
     return (
         <>
-            <ImageContainer key={currentImageIndex} imageUrl={images[currentImageIndex]}/>
             <ImageContainer key={currentImageIndex} imageUrl={images[currentImageIndex]}/>
             <LoginPage>
                 <LoginForm>
@@ -47,6 +59,11 @@ export function Registration() {
                     </Form>
                 </LoginForm>
             </LoginPage>
+
+            {isOpenModal &&
+                <ModalMessageWindow setCloseModal={setOpenModal} message={strings.errorSignIn} icon={iconCheckError}
+                                    isOpenModalMessage={true}/>}
+
         </>
     );
 }
@@ -67,7 +84,7 @@ const zoomIn = keyframes`
   }
 `;
 
-const ImageContainer = styled.div<{imageUrl : string}>`
+const ImageContainer = styled.div<{ imageUrl: string }>`
   width: 100vw;
   height: 100vh;
   background-size: cover;
@@ -116,7 +133,7 @@ const Input = styled.input`
 `;
 
 const Button = styled.button.attrs({className: "btn-primary"})`
-  
+
   width: 40%;
   margin-top: 10px;
   margin-right: auto;

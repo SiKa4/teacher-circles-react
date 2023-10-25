@@ -3,4 +3,5 @@ export const enum strings {
     password = "Пароль",
     signInSystem = "Войти в систему",
     signIn = "Войти",
+    errorSignIn = "Ошибка входа. Введены не верные данные пользователя."
 }

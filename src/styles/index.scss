@@ -56,3 +56,13 @@ body {
     cursor: default;
   }
 }
+
+.wrapper-modal-window{
+  background-color: #0E0D0D99;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 100;
+}

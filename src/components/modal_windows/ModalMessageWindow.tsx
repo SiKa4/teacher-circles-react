@@ -39,34 +39,36 @@ export const ModalMessageWindow = observer(
 
 const WrapperBody = styled.div.attrs({ className: 'modal-wrapper-body' })<{ isDowning: boolean | null }>`
   position: absolute;
-  top: -20vh;
-  right: 60vw;
-  z-index: 1000;
+  top: 10vh;
+  right: 0;
   ${({ isDowning }) =>
     isDowning == true &&
     css`
-      transition: top 0.5s ease;
-      top: 20vh;
+      transition: right 0.5s ease;
+      right: 21vw;
     `}
 
   ${({ isDowning }) =>
     isDowning == false &&
     css`
-      transition: top 0.5s ease;
-      top: -20vh;
+      transition: right 0.5s ease;
+      right: 0;
     `}
 `;
 
 ModalMessageWindow.displayName = 'ModalMessageWindow';
 
-const Span = styled.span.attrs({ className: 'span-text' })``;
+const Span = styled.span.attrs({ className: 'span-text' })`
+    margin-top: 10px;
+`;
 
 const BodyModal = styled.div.attrs({ className: 'body-modal' })`
   background-color: var(--color-white);
-  width: 22vw;
+  width: 20vw;
   position: fixed;
   height: fit-content;
-  border-radius: 15px;
+  border-bottom-left-radius: 15px;
+  border-top-left-radius: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
