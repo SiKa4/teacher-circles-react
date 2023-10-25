@@ -5,8 +5,9 @@ import {iconCheckError, singIn1, singIn2, singIn3} from "../assets/img.ts";
 import {ModalMessageWindow} from "../components/modal_windows/ModalMessageWindow.tsx";
 import {useNavigate} from "react-router-dom";
 import {useCookies} from "react-cookie";
+import {apiRequest} from "../api_request/api-request.ts";
 
-export function Registration() {
+export function Authorization() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -24,16 +25,23 @@ export function Registration() {
         return () => clearInterval(interval);
     }, []);
 
-    const handleLogin = (e: FormEvent) => {
+    const handleLogin = async (e: FormEvent) => {
         e.preventDefault();
 
-        if(username == "" && password == ""){
+        if (username == "" && password == "") {
+            setOpenModal(true);
+            return;
+        }
+
+        const request = await apiRequest.getUserByLoginPassword(username, password);
+
+        if (!request) {
             setOpenModal(true);
             return;
         }
 
         navigate("/main", {replace: true});
-        setCookie("user", "2", { path: "/" });
+        setCookie("user", request, { path: "/" });
     };
 
     return (
@@ -118,6 +126,7 @@ const LoginForm = styled.div`
 
 const Title = styled.h2`
   text-align: center;
+  font-size: 26px;
 `;
 
 const Form = styled.form`
@@ -133,10 +142,10 @@ const Input = styled.input`
 `;
 
 const Button = styled.button.attrs({className: "btn-primary"})`
-
-  width: 40%;
+  width: 50%;
   margin-top: 10px;
   margin-right: auto;
   margin-left: auto;
-  min-height: 35px;
+  min-height: 40px;
+
 `;

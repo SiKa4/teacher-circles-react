@@ -37,6 +37,8 @@ export const ModalMessageWindow = observer(
   }
 );
 
+ModalMessageWindow.displayName = 'ModalMessageWindow';
+
 const WrapperBody = styled.div.attrs({ className: 'modal-wrapper-body' })<{ isDowning: boolean | null }>`
   position: absolute;
   top: 10vh;
@@ -53,10 +55,8 @@ const WrapperBody = styled.div.attrs({ className: 'modal-wrapper-body' })<{ isDo
     css`
       transition: right 0.5s ease;
       right: 0;
-    `}
+    `};
 `;
-
-ModalMessageWindow.displayName = 'ModalMessageWindow';
 
 const Span = styled.span.attrs({ className: 'span-text' })`
     margin-top: 10px;
@@ -80,5 +80,5 @@ const BodyModal = styled.div.attrs({ className: 'body-modal' })`
     font-weight: 600;
     line-height: 24px;
     text-align: center;
-  }
+  };
 `;
