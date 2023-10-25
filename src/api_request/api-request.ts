@@ -9,7 +9,7 @@ class ApiRequest {
             password: password,
         };
 
-        const answer = axios.post(this.mainUrl + "Login", dataToSend)
+        return axios.post(this.mainUrl + "Login", dataToSend)
             .then(response => {
                 const data = response.data;
                 return {role: data.role, user_id: data.user_id}
@@ -17,11 +17,10 @@ class ApiRequest {
             .catch(() => {
                 return null;
             });
-        return answer;
     }
 
     public getUserInfoById(idUser: string) {
-        const answer = axios.get(this.mainUrl + `GetEmploye/${idUser}`)
+        return axios.get(this.mainUrl + `GetEmploye/${idUser}`)
             .then(response => {
                 const data = response.data.employee;
                 return {
@@ -34,11 +33,10 @@ class ApiRequest {
             .catch(() => {
                 return null;
             });
-        return answer;
     }
 
     public getAllEmployee() {
-        const answer = axios.get(this.mainUrl + `GetEmployes`)
+        return axios.get(this.mainUrl + `GetEmployes`)
             .then(response => {
                 const data = response.data.employes;
                 console.log(data)
@@ -53,7 +51,16 @@ class ApiRequest {
             .catch(() => {
                 return null;
             });
-        return answer;
+    }
+
+    public postEmployee(employee : {username : String, password: String, surname: String, first_name : String, last_name: String}) {
+        return axios.post(this.mainUrl + "CreateEmployee", employee)
+            .then(() => {
+                return true;
+            })
+            .catch(() => {
+                return null;
+            });
     }
 }
 

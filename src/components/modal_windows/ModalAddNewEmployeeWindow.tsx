@@ -1,18 +1,25 @@
 import {observer} from 'mobx-react-lite';
 import styled from 'styled-components';
-import {HTMLAttributes, useEffect, useState} from 'react';
-import {sleep} from "../../untils/sleep.ts";
-import {closeIcon} from "../../assets/img.ts";
-import {EmployeeBody} from "../body/body_pages/EmployeeBody.tsx";
+import {HTMLAttributes, useState} from 'react';
+import {closeIcon, iconCheckError} from "../../assets/img.ts";
+import {ModalMessageWindow} from "./ModalMessageWindow.tsx";
+import {apiRequest} from "../../api_request/api-request.ts";
 
 type ModalAddNewEmployeeWindow = HTMLAttributes<HTMLDivElement> & {
     setCloseModal: (isClose: boolean) => void;
     isOpenModal: boolean;
+    isOkAddEmployee: (isOk: boolean) => void;
 };
 
 export const ModalAddNewEmployeeWindow = observer(
-    ({setCloseModal, isOpenModal}: ModalAddNewEmployeeWindow) => {
-        const [isDowning, setIsDowning] = useState<null | boolean>(null);
+    ({setCloseModal, isOkAddEmployee}: ModalAddNewEmployeeWindow) => {
+        const [isOpenModalMessage, setIsOpenModalMessage] = useState(false);
+
+        const [firstName, setFirstName] = useState('');
+        const [lastName, setLastName] = useState('');
+        const [surname, setSurname] = useState('');
+        const [login, setLogin] = useState('');
+        const [password, setPassword] = useState('');
 
         /*useEffect(() => {
             if (isOpenModal) {
@@ -26,51 +33,87 @@ export const ModalAddNewEmployeeWindow = observer(
             }
         }, [isOpenModal]);*/
 
+        const addNewEmployee = async () => {
+            if (firstName == '' || lastName == '' || surname == '' || login == '' || password == '') {
+                setIsOpenModalMessage(true);
+                return;
+            }
+
+            const isCreateEmloyee = await apiRequest.postEmployee({
+                username: login,
+                password: password,
+                surname: surname,
+                first_name: firstName,
+                last_name: lastName
+            })
+
+            if(!isCreateEmloyee) {
+                setIsOpenModalMessage(true);
+                return;
+            }
+
+            setCloseModal(false);
+            isOkAddEmployee(true);
+        };
+
         return (
-            <Wrapper>
-                <WrapperBody>
-                    <BodyModal>
-                        <Title>
-                            <span>Добавление нового сотрудника</span>
-                            <img src={closeIcon} onClick={() => setCloseModal(false)} alt=""/>
-                        </Title>
-                        <WrapperContent>
+            <>
+                <Wrapper>
+                    <WrapperBody>
+                        <BodyModal>
+                            <Title>
+                                <span>Добавление нового сотрудника</span>
+                                <img src={closeIcon} onClick={() => setCloseModal(false)} alt=""/>
+                            </Title>
+                            <WrapperContent>
+                                <WrapperInput>
+                                    <InputName placeholder="Имя" value={firstName}
+                                               onChange={(e) => setFirstName(e.target.value)}></InputName>
+                                    <DownInputSpan>Имя</DownInputSpan>
+                                </WrapperInput>
+                                <WrapperInput>
+                                    <InputName placeholder="Фамилия" value={lastName}
+                                               onChange={(e) => setLastName(e.target.value)}></InputName>
+                                    <DownInputSpan>Фамилия</DownInputSpan>
+                                </WrapperInput>
+                                <WrapperInput>
+                                    <InputName placeholder="Отчество" value={surname}
+                                               onChange={(e) => setSurname(e.target.value)}></InputName>
+                                    <DownInputSpan>Отчество</DownInputSpan>
+                                </WrapperInput>
+                            </WrapperContent>
+                            <WrapperContent>
+                                <WrapperInput>
+                                    <InputName placeholder="Логин" value={login}
+                                               onChange={(e) => setLogin(e.target.value)}></InputName>
+                                    <DownInputSpan>Логин</DownInputSpan>
+                                </WrapperInput>
+                                <WrapperInput>
+                                    <InputName placeholder="Пароль" type="password" value={password}
+                                               onChange={(e) => setPassword(e.target.value)}></InputName>
+                                    <DownInputSpan>Пароль</DownInputSpan>
+                                </WrapperInput>
+                            </WrapperContent>
                             <WrapperInput>
-                                <InputName placeholder="Имя"></InputName>
-                                <DownInputSpan>Имя</DownInputSpan>
+                                <ButtonWrapper>
+                                    <Btn onClick={() => setCloseModal(false)}>
+                                        <span>Отмена</span>
+                                    </Btn>
+                                    <Btn onClick={addNewEmployee}>
+                                        <span>Добавить</span>
+                                    </Btn>
+                                </ButtonWrapper>
                             </WrapperInput>
-                            <WrapperInput>
-                                <InputName placeholder="Фамилия"></InputName>
-                                <DownInputSpan>Фамилия</DownInputSpan>
-                            </WrapperInput>
-                            <WrapperInput>
-                                <InputName placeholder="Отчество"></InputName>
-                                <DownInputSpan>Отчество</DownInputSpan>
-                            </WrapperInput>
-                        </WrapperContent>
-                        <WrapperContent>
-                            <WrapperInput>
-                                <InputName placeholder="Логин"></InputName>
-                                <DownInputSpan>Логин</DownInputSpan>
-                            </WrapperInput>
-                            <WrapperInput>
-                                <InputName placeholder="Пароль"></InputName>
-                                <DownInputSpan>Пароль</DownInputSpan>
-                            </WrapperInput>
-                        </WrapperContent>
-                        <WrapperInput>
-                            <ButtonWrapper>
-                                <Btn onClick={() => setCloseModal(false)}>
-                                    <span>Отмена</span>
-                                </Btn>
-                                <Btn>
-                                    <span>Добавить</span>
-                                </Btn>
-                            </ButtonWrapper>
-                        </WrapperInput>
-                    </BodyModal>
-                </WrapperBody>
-            </Wrapper>
+                        </BodyModal>
+                    </WrapperBody>
+                </Wrapper>
+
+                {isOpenModalMessage &&
+                    <ModalMessageWindow setCloseModal={setIsOpenModalMessage} message={"Ошибка. Заполнены не все поля."}
+                                        icon={iconCheckError}
+                                        isOpenModalMessage={true}/>}
+            </>
+
         );
     }
 );

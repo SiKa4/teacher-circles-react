@@ -1,18 +1,21 @@
 import {observer} from "mobx-react-lite";
-import {plusIcon} from "../../../assets/img.ts";
+import {changeIcon, iconCheckError, iconCheckOk, plusIcon, removeBasketIcon} from "../../../assets/img.ts";
 import styled from "styled-components";
 import {useEffect, useState} from "react";
 import {apiRequest} from "../../../api_request/api-request.ts";
 import {ModalAddNewEmployeeWindow} from "../../modal_windows/ModalAddNewEmployeeWindow.tsx";
+import {ModalMessageWindow} from "../../modal_windows/ModalMessageWindow.tsx";
 
 export const EmployeeBody = observer(() => {
     const [isOpenAddNewEmployee, setIsOpenAddNewEmployee] = useState(false);
+    const [isOpenModalMessage, setIsOpenModalMessage] = useState(false);
+
     const [employees, setEmployees] = useState<{
         first_name: String,
         last_name: String,
         surname: String,
         id: number, id_role: number,
-        password: string, username: string
+        password: string, username: string,
     }[] | null>(null);
 
     useEffect(() => {
@@ -26,6 +29,13 @@ export const EmployeeBody = observer(() => {
 
     const onClickAddNewEmployee = () => {
         setIsOpenAddNewEmployee(true);
+    };
+
+    const isOkAddEmployee = (isOk: boolean) => {
+        if (isOk) {
+            setIsOpenModalMessage(true);
+            getAllEmployees();
+        }
     };
 
     return (
@@ -50,15 +60,15 @@ export const EmployeeBody = observer(() => {
                     </TableHeader>
                     <TableBody>
                         {employees && employees.map((x, i) => (
-                            <TableRow>
+                            <TableRow key={i}>
                                 <TableCell>{x.id}</TableCell>
                                 <TableCell>{x.first_name}</TableCell>
                                 <TableCell>{x.last_name}</TableCell>
                                 <TableCell>{x.surname}</TableCell>
                                 <TableCell>{x.username}</TableCell>
                                 <TableCell>{x.password}</TableCell>
-                                <TableCell></TableCell>
-                                <TableCell></TableCell>
+                                <TableCell><Icon src={changeIcon}/></TableCell>
+                                <TableCell><Icon src={removeBasketIcon}/></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -66,8 +76,13 @@ export const EmployeeBody = observer(() => {
             </Wrapper>
             {
                 isOpenAddNewEmployee &&
-                <ModalAddNewEmployeeWindow setCloseModal={setIsOpenAddNewEmployee} isOpenModal={isOpenAddNewEmployee}/>
+                <ModalAddNewEmployeeWindow setCloseModal={setIsOpenAddNewEmployee} isOpenModal={isOpenAddNewEmployee}
+                                           isOkAddEmployee={isOkAddEmployee}/>
             }
+            {isOpenModalMessage &&
+                <ModalMessageWindow setCloseModal={setIsOpenModalMessage} message={"Преподаватель успешно добавлен."}
+                                    icon={iconCheckOk}
+                                    isOpenModalMessage={true}/>}
         </>
 
     );
@@ -86,6 +101,7 @@ const Btn = styled.button.attrs({className: 'btn-primary'})`
   width: 50px;
   margin-left: auto;
   margin-right: 20px;
+  margin-bottom: 10px;
 `;
 
 const Table = styled.table`
@@ -100,8 +116,8 @@ const TableHeader = styled.thead`
 `;
 
 const TableHeaderCell = styled.th`
-  padding: 12px;
-  text-align: left;
+  padding: 10px 0px;
+  text-align: center;
 `;
 
 const TableBody = styled.tbody``;
@@ -110,7 +126,19 @@ const TableRow = styled.tr`
 
 `;
 
+const Icon = styled.img`
+  height: 24px;
+  width: 24px;
+  cursor: pointer;
+  border-radius: 50px;
+  padding: 13px;
+  
+  &:hover{
+    background: var(--color-span-background-hover);
+  }
+`;
+
 const TableCell = styled.td`
-  padding: 10px;
   border: 1px solid #ccc;
+  text-align: center;
 `;

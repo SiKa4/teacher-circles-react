@@ -43,6 +43,7 @@ const WrapperBody = styled.div.attrs({ className: 'modal-wrapper-body' })<{ isDo
   position: absolute;
   top: 10vh;
   right: 0;
+  z-index: 1000;
   ${({ isDowning }) =>
     isDowning == true &&
     css`

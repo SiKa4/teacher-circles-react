@@ -29,7 +29,7 @@ export function Authorization() {
     const handleLogin = async (e: FormEvent) => {
         e.preventDefault();
 
-        if (username == "" && password == "") {
+        if (username == "" || password == "") {
             setOpenModal(true);
             return;
         }
