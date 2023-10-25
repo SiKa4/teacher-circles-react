@@ -1,4 +1,4 @@
-import {Registration} from "./pages/registration.tsx";
+import {Registration} from "./pages/Registration.tsx";
 
 function App() {
 
