@@ -1,0 +1,58 @@
+@import "./colors";
+
+@font-face {
+  font-family: 'Golos';
+  src: local('Golos'), url(../assets/fonts/golos.ttf) format("truetype");
+}
+
+html, body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  color: #333;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Golos', sans-serif;
+  line-height: 20px;
+}
+
+.btn-primary {
+  background: var(--primary-btn);
+  border: none;
+  display: flex;
+  font-size: 16px;
+  font-weight: 600;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-white);
+  transition: all 0.5s ease-out;
+  border-radius: 20px;
+
+  &:hover {
+    background: var(--hover-primary-btn);
+    cursor: pointer;
+  }
+
+  & img{
+    height: 24px;
+    width: 24px;
+  }
+
+  &:active {
+    background: var(--pressed-primary-btn);
+  }
+
+  &:disabled{
+    background: var(--disabled-primary-btn);
+    cursor: default;
+  }
+
+  &:disabled img {
+    cursor: default;
+  }
+}
