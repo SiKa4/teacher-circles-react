@@ -19,6 +19,42 @@ class ApiRequest {
             });
         return answer;
     }
+
+    public getUserInfoById(idUser: string) {
+        const answer = axios.get(this.mainUrl + `GetEmploye/${idUser}`)
+            .then(response => {
+                const data = response.data.employee;
+                return {
+                    first_name: data.first_name,
+                    last_name: data.last_name,
+                    surname: data.surname,
+                    id: data.id, id_role: data.id_role
+                }
+            })
+            .catch(() => {
+                return null;
+            });
+        return answer;
+    }
+
+    public getAllEmployee() {
+        const answer = axios.get(this.mainUrl + `GetEmployes`)
+            .then(response => {
+                const data = response.data.employes;
+                console.log(data)
+                return (data as {
+                    first_name: String,
+                    last_name: String,
+                    surname: String,
+                    id: number, id_role: number,
+                    password: string, username: string
+                }[]);
+            })
+            .catch(() => {
+                return null;
+            });
+        return answer;
+    }
 }
 
 export const apiRequest = new ApiRequest();

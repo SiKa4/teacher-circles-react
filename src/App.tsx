@@ -5,17 +5,24 @@ import {observer} from "mobx-react-lite";
 import {useCookies} from "react-cookie";
 import {useEffect} from "react";
 import {appStore} from "./data/stores/app.store.ts";
+import {apiRequest} from "./api_request/api-request.ts";
 
 export const App = observer(() => {
     const [cookies,] = useCookies(["user"]);
 
     useEffect(() => {
-        if (!cookies.user) return;
+        (async () => {
+            if (!cookies.user) return;
 
-        const userInfo : {role : string, user_id: string} = cookies.user;
-        appStore.setUserInfo(userInfo);
+            const userInfo: { role: string, user_id: string } = cookies.user;
 
-    }, [cookies]);
+            let user;
+            user = await apiRequest.getUserInfoById(userInfo.user_id);
+            if (!user) return;
+
+            appStore.setUserInfo(user);
+        })();
+    }, []);
 
     return (
         <div className="App">

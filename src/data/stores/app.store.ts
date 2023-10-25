@@ -1,7 +1,12 @@
-import { makeAutoObservable } from 'mobx';
+import {makeAutoObservable} from 'mobx';
 
 class AppStore {
-    private _userInfo : {role : string, user_id: string} | null = null
+    private _userInfo: {
+        first_name: string,
+        last_name: string,
+        surname: string,
+        id: number, id_role: number
+    } | null = null
 
     private _isOpenLeftSidebar = true;
 
@@ -9,14 +14,20 @@ class AppStore {
         makeAutoObservable(this);
     }
 
-    public setUserInfo(userInfo: {role : string, user_id: string}) {
+    public setUserInfo(userInfo: {
+        first_name: string,
+        last_name: string,
+        surname: string,
+        id: number, id_role: number
+    }) {
         this._userInfo = userInfo;
     }
+
     public get getUserInfo() {
         return this._userInfo;
     }
 
-    public setIsOpenLeftSidebar(){
+    public setIsOpenLeftSidebar() {
         this._isOpenLeftSidebar = !this._isOpenLeftSidebar;
     }
 

@@ -6,6 +6,7 @@ import {ModalMessageWindow} from "../components/modal_windows/ModalMessageWindow
 import {useNavigate} from "react-router-dom";
 import {useCookies} from "react-cookie";
 import {apiRequest} from "../api_request/api-request.ts";
+import {appStore} from "../data/stores/app.store.ts";
 
 export function Authorization() {
     const [username, setUsername] = useState('');
@@ -34,11 +35,18 @@ export function Authorization() {
         }
 
         const request = await apiRequest.getUserByLoginPassword(username, password);
-
         if (!request) {
             setOpenModal(true);
             return;
         }
+
+        const user = await apiRequest.getUserInfoById(request.user_id);
+        if(!user) {
+            setOpenModal(true);
+            return;
+        }
+
+        appStore.setUserInfo(user);
 
         navigate("/main", {replace: true});
         setCookie("user", request, { path: "/" });

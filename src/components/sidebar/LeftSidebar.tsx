@@ -1,36 +1,114 @@
 import styled, {css} from 'styled-components';
-import {HTMLAttributes} from "react";
+import {HTMLAttributes, JSX, useEffect, useState} from "react";
 import {observer} from "mobx-react-lite";
 import {appStore} from "../../data/stores/app.store.ts";
+import {calendarIcon, employeeIcon, homeIcon, scheduleIcon} from "../../assets/img.ts";
+import {EmployeeBody} from "../body/body_pages/EmployeeBody.tsx";
+import {MainBody} from "../body/body_pages/MainBody.tsx";
+import {CircleBody} from "../body/body_pages/CircleBody.tsx";
+import {ScheduleBody} from "../body/body_pages/ScheduleBody.tsx";
 
-type LeftSidebar = HTMLAttributes<HTMLDivElement> & {};
+type LeftSidebar = HTMLAttributes<HTMLDivElement> & {
+    setBodyContent: (bodyContent: JSX.Element | null) => void;
+};
 
-export const LeftSidebar = observer(() => {
+export const LeftSidebar = observer(({setBodyContent}: LeftSidebar) => {
+    const [category, setCategory] = useState<{ name: string, icon: string, component: JSX.Element }[] | null>(null);
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const user = appStore.getUserInfo;
+
+    useEffect(() => {
+        if (user?.id_role == 1) {
+            setCategory([
+                {name: 'Главная', icon: homeIcon, component: <MainBody/>},
+                {name: 'Сотрудники', icon: employeeIcon, component: <EmployeeBody/>},
+                {name: 'Кружки', icon: scheduleIcon, component: <CircleBody/>},
+                {name: 'Расписание', icon: calendarIcon, component: <ScheduleBody/>},
+            ]);
+        } else {
+
+        }
+    }, []);
+
+    useEffect(() => {
+        setBodyEl();
+    }, [category]);
+
+    useEffect(() => {
+        setBodyEl();
+    }, [selectedIndex]);
+
+    const setBodyEl = () => {
+        if (category == null) return;
+        setBodyContent(category[selectedIndex].component);
+    }
+
     return (
         <Wrapper isMobile={false} isOpen={appStore.getIsOpenLeftSidebar}>
+            {category && category.map((x, i) => (
+                <WrapperTextAndIcon key={i} isSelected={selectedIndex == i} onClick={() => setSelectedIndex(i)} isOpenSideBar={appStore.getIsOpenLeftSidebar}>
+                    <ImgIcon src={x.icon} alt=''/>
+                    <Span>{x.name}</Span>
+                </WrapperTextAndIcon>
+            ))}
         </Wrapper>
     );
 });
 
 LeftSidebar.displayName = 'LeftSidebar';
 
-const AllCategoriesContent = styled.div.attrs({className: 'all-categories'})`
-  overflow-y: auto;
-  margin-top: -3.9px;
-  overflow-x: hidden;
-  height: calc(100% - 55px - 213px);
-  border-right: #e7e7e7 2px solid;
-  background: var(--color-white);
+const WrapperTextAndIcon = styled.div.attrs({className: 'wrapper-text-and-icon'})<{ isSelected: boolean,
+    isOpenSideBar: boolean }>`
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: left;
+  line-height: 20px;
+  border-bottom-right-radius: 20px;
+  border-top-right-radius: 20px;
+  transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
+  width: 170px;
+  height: 20px;
 
-  &::-webkit-scrollbar {
-    width: 10px;
+  padding: 10px 20px;
+  align-content: center;
+  align-items: center;
+  display: flex;
+
+  &:hover {
+    cursor: pointer;
+    background: var(--color-span-background-hover);
   }
 
-  &::-webkit-scrollbar-thumb {
-    background-color: #d9d9d9;
-    border-radius: 8px;
-    border-right: 2px white solid;
-  }
+  ${({isSelected}) => isSelected && css`
+    background: var(--color-span-background);
+    font-weight: 700;
+  `}
+
+  ${({isOpenSideBar}) => !isOpenSideBar && css`
+    width: 28px;
+    height: 28px;
+    border-radius: 50px;
+    padding: 10px 10px;
+    margin-left: 16px;
+
+    ${ImgIcon} {
+      margin-left: 3px;
+      margin-right: 25px;
+    }
+  `}
+`;
+
+const Span = styled.span.attrs({className: 'span-text'})`
+  color: black;
+`;
+
+const ImgIcon = styled.img`
+  width: 22px;
+  height: 22px;
+  margin-bottom: 4px;
+  margin-right: 23px;
+  margin-left: 10px;
 `;
 
 const Wrapper = styled.div.attrs({className: 'sidebar-wrapper'})<{
@@ -39,9 +117,14 @@ const Wrapper = styled.div.attrs({className: 'sidebar-wrapper'})<{
 }>`
   height: 100vh;
   width: 250px;
+  min-width: 250px;
   overflow: hidden;
-  display: block;
-  z-index: 3;
+  display: flex;
+  flex-direction: column;
+
+  ${WrapperTextAndIcon}:first-child {
+    margin-top: 20px;
+  }
 
   & img {
     -webkit-app-region: no-drag;
@@ -51,13 +134,14 @@ const Wrapper = styled.div.attrs({className: 'sidebar-wrapper'})<{
   ${({isOpen}) =>
           !isOpen &&
           css`
-            transition: width 1s;
-            width: 80px;
+            transition: width 1s, min-width 1s;
+            width: 75px;
+            min-width: 75px;
           `}
 
   ${({isOpen}) =>
           isOpen &&
           css`
-            transition: width 1s;
+            transition: width 1s, min-width 1s;
           `}
 `;
