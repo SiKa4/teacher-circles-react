@@ -1,7 +1,7 @@
 import axios from "axios";
 
 class ApiRequest {
-    mainUrl = "http://192.168.0.51:5001/api/";
+    mainUrl = "http://192.168.126.41:5001/api/";
 
     public getUserByLoginPassword(login: string, password: string) {
         const dataToSend = {
@@ -53,8 +53,24 @@ class ApiRequest {
             });
     }
 
-    public postEmployee(employee : {username : String, password: String, surname: String, first_name : String, last_name: String}) {
+    public postEmployee(employee: {
+        username: String,
+        password: String,
+        surname: String,
+        first_name: String,
+        last_name: String
+    }) {
         return axios.post(this.mainUrl + "CreateEmployee", employee)
+            .then(() => {
+                return true;
+            })
+            .catch(() => {
+                return null;
+            });
+    }
+
+    public deleteEmployeByid(idEmploye: number) {
+        return axios.delete(this.mainUrl + `DeleteEmployee/${idEmploye}`)
             .then(() => {
                 return true;
             })

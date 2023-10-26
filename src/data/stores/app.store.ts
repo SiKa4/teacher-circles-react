@@ -19,7 +19,7 @@ class AppStore {
         last_name: string,
         surname: string,
         id: number, id_role: number
-    }) {
+    } | null) {
         this._userInfo = userInfo;
     }
 

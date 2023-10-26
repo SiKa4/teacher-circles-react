@@ -1,6 +1,5 @@
 import {Authorization} from "./pages/Authorization.tsx";
 import {MainPage} from "./pages/MainPage.tsx";
-import {Route, Routes} from "react-router-dom";
 import {observer} from "mobx-react-lite";
 import {useCookies} from "react-cookie";
 import {useEffect} from "react";
@@ -9,6 +8,7 @@ import {apiRequest} from "./api_request/api-request.ts";
 
 export const App = observer(() => {
     const [cookies,] = useCookies(["user"]);
+    const userInfo = appStore.getUserInfo;
 
     useEffect(() => {
         (async () => {
@@ -18,18 +18,14 @@ export const App = observer(() => {
 
             let user;
             user = await apiRequest.getUserInfoById(userInfo.user_id);
-            if (!user) return;
-
             appStore.setUserInfo(user);
+
         })();
-    }, []);
+    }, [userInfo]);
 
     return (
         <div className="App">
-            <Routes>
-                <Route path="/" element={appStore.getUserInfo != null ? <MainPage/> : <Authorization/>}/>
-                <Route path="main" element={<MainPage/>}/>
-            </Routes>
+            {appStore.getUserInfo ? <MainPage/> : <Authorization/>}
         </div>
     )
 });

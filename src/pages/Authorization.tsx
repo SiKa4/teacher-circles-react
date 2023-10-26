@@ -3,7 +3,6 @@ import {FormEvent, useEffect, useState} from "react";
 import {strings} from "../assets/strings/strings.ts";
 import {iconCheckError, singIn1, singIn2, singIn3} from "../assets/img.ts";
 import {ModalMessageWindow} from "../components/modal_windows/ModalMessageWindow.tsx";
-import {useNavigate} from "react-router-dom";
 import {useCookies} from "react-cookie";
 import {apiRequest} from "../api_request/api-request.ts";
 import {appStore} from "../data/stores/app.store.ts";
@@ -13,7 +12,6 @@ export function Authorization() {
     const [password, setPassword] = useState('');
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isOpenModal, setOpenModal] = useState(false);
-    const navigate = useNavigate();
     const [, setCookie] = useCookies(["user"]);
 
     useEffect(() => {
@@ -21,7 +19,7 @@ export function Authorization() {
             setCurrentImageIndex((prevIndex) =>
                 prevIndex === images.length - 1 ? 0 : prevIndex + 1
             );
-        }, 8000);
+        }, 6000);
 
         return () => clearInterval(interval);
     }, []);
@@ -48,7 +46,6 @@ export function Authorization() {
 
         appStore.setUserInfo(user);
 
-        navigate("/main", {replace: true});
         setCookie("user", request, { path: "/" });
     };
 

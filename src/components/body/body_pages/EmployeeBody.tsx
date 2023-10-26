@@ -1,14 +1,16 @@
 import {observer} from "mobx-react-lite";
-import {changeIcon, iconCheckError, iconCheckOk, plusIcon, removeBasketIcon} from "../../../assets/img.ts";
+import {changeIcon, iconCheckOk, plusIcon, removeBasketIcon} from "../../../assets/img.ts";
 import styled from "styled-components";
 import {useEffect, useState} from "react";
 import {apiRequest} from "../../../api_request/api-request.ts";
 import {ModalAddNewEmployeeWindow} from "../../modal_windows/ModalAddNewEmployeeWindow.tsx";
 import {ModalMessageWindow} from "../../modal_windows/ModalMessageWindow.tsx";
+import {strings} from "../../../assets/strings/strings.ts";
 
 export const EmployeeBody = observer(() => {
     const [isOpenAddNewEmployee, setIsOpenAddNewEmployee] = useState(false);
     const [isOpenModalMessage, setIsOpenModalMessage] = useState(false);
+    const [messageModelWindow, setMessageModalWindow] = useState('');
 
     const [employees, setEmployees] = useState<{
         first_name: String,
@@ -32,10 +34,21 @@ export const EmployeeBody = observer(() => {
     };
 
     const isOkAddEmployee = (isOk: boolean) => {
-        if (isOk) {
-            setIsOpenModalMessage(true);
-            getAllEmployees();
-        }
+        if (isOk) setMessageModalWindow(strings.completeAddEmloyee);
+        else setMessageModalWindow(strings.errorAddEmloyee);
+
+        setIsOpenModalMessage(true);
+        getAllEmployees();
+    };
+
+    const onClickDeleteEmployee = async (idEmployee: number) => {
+        const isOk = await apiRequest.deleteEmployeByid(idEmployee);
+
+        if (!isOk) setMessageModalWindow(strings.errorDeleteEmployee);
+        else setMessageModalWindow(strings.completeAddEmoloyee);
+
+        getAllEmployees();
+        setIsOpenModalMessage(true);
     };
 
     return (
@@ -68,7 +81,8 @@ export const EmployeeBody = observer(() => {
                                 <TableCell>{x.username}</TableCell>
                                 <TableCell>{x.password}</TableCell>
                                 <TableCell><Icon src={changeIcon}/></TableCell>
-                                <TableCell><Icon src={removeBasketIcon}/></TableCell>
+                                <TableCell><Icon src={removeBasketIcon}
+                                                 onClick={() => onClickDeleteEmployee(x.id)}/></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -80,7 +94,7 @@ export const EmployeeBody = observer(() => {
                                            isOkAddEmployee={isOkAddEmployee}/>
             }
             {isOpenModalMessage &&
-                <ModalMessageWindow setCloseModal={setIsOpenModalMessage} message={"Преподаватель успешно добавлен."}
+                <ModalMessageWindow setCloseModal={setIsOpenModalMessage} message={messageModelWindow}
                                     icon={iconCheckOk}
                                     isOpenModalMessage={true}/>}
         </>
@@ -132,8 +146,8 @@ const Icon = styled.img`
   cursor: pointer;
   border-radius: 50px;
   padding: 13px;
-  
-  &:hover{
+
+  &:hover {
     background: var(--color-span-background-hover);
   }
 `;

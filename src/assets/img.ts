@@ -3,7 +3,7 @@ import singIn2 from './img/2SignIn.jpg';
 import singIn3 from './img/3SignIn.jpg';
 import iconCheckError from './img/iconCheckError.svg';
 import standartImageProfile from './img/standartImageProfile.png';
-import hamburgerIcon from './img/hamburger.svg';
+import hamburgerIcon from './img/hamburgerIconBlack.svg';
 import homeIcon from './img/homeIcon.svg';
 import employeeIcon from './img/employeeIcon.svg'
 import calendarIcon from './img/calendarIcon.svg'
@@ -13,6 +13,7 @@ import closeIcon from './img/closeIcon.svg'
 import iconCheckOk from './img/iconCheckOk.svg'
 import removeBasketIcon from './img/removeBasketIcon.svg'
 import changeIcon from './img/changeIcon.svg'
+import exitIconAdd from './img/exitIconAdd.svg'
 
 
 export {
@@ -30,5 +31,6 @@ export {
   closeIcon,
   iconCheckOk,
   removeBasketIcon,
-  changeIcon
+  changeIcon,
+  exitIconAdd
 };

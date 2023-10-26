@@ -22,5 +22,6 @@ const Wrapper = styled.div.attrs({className: 'wrapper-body'})`
   border-radius: 20px;
   box-shadow: 5px 5px 5px #cecece;
   overflow: hidden;
+  margin-top: 10px;
 `;
 

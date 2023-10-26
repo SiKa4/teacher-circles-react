@@ -1,14 +1,26 @@
 import {observer} from "mobx-react-lite";
 import styled, {css} from "styled-components";
-import {hamburgerIcon} from "../../assets/img.ts";
+import {exitIconAdd, hamburgerIcon} from "../../assets/img.ts";
 import {appStore} from "../../data/stores/app.store.ts";
+import {useCookies} from "react-cookie";
 
 
 export const Header = observer(() => {
+    const [, setCookie] = useCookies(["user"]);
+
+    const logOut = () => {
+        setCookie("user", null, {path: "/"});
+        appStore.setUserInfo(null);
+    }
+
     return (
         <HeaderS>
             <HamburgerIcon isOpen={appStore.getIsOpenLeftSidebar} src={hamburgerIcon} alt=""
                            onClick={() => appStore.setIsOpenLeftSidebar()}/>
+            <DivRight>
+                <HamburgerIcon isOpen={true} src={exitIconAdd} alt="" onClick={logOut}/>
+            </DivRight>
+
         </HeaderS>
     );
 });
@@ -19,14 +31,13 @@ const HamburgerIcon = styled.img.attrs({className: 'hamburger-icon'})<{ isOpen: 
   width: 24px;
   cursor: pointer;
   transition: transform 0.5s ease, all 0.5s ease-out;;
-  filter: invert(1);
-  background: #242424;
+  background: #d2d2d2;
   border-radius: 50px;
   padding: 13px;
 
 
   &:hover {
-    background: #545454;
+    background: #b1b1b1;
   }
 
   ${({isOpen}) =>
@@ -41,17 +52,22 @@ const HamburgerIcon = styled.img.attrs({className: 'hamburger-icon'})<{ isOpen: 
             transform: rotate(0deg);
           `}
   z-index: 0;
-  position: absolute;
-  margin-left: 15px;
   margin-top: 10px;
+`;
+
+const DivRight = styled.div`
+  margin-left: auto;
+  margin-right: 17px;
 `;
 
 const HeaderS = styled.div.attrs({className: 'header'})`
   height: 56px;
   align-items: center;
   display: flex;
+
   background-color: transparent;
   background: var(--color-background);
+  padding-left: 17px;
 
   img {
     user-select: none;
