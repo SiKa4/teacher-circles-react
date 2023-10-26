@@ -68,7 +68,7 @@ const WrapperTextAndIcon = styled.div.attrs({className: 'wrapper-text-and-icon'}
   border-top-right-radius: 20px;
   transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
   width: 170px;
-  height: 20px;
+  height: 28px;
 
   padding: 10px 20px;
   align-content: center;

@@ -39,7 +39,6 @@ class ApiRequest {
         return axios.get(this.mainUrl + `GetEmployes`)
             .then(response => {
                 const data = response.data.employes;
-                console.log(data)
                 return (data as {
                     first_name: String,
                     last_name: String,
@@ -71,6 +70,31 @@ class ApiRequest {
 
     public deleteEmployeByid(idEmploye: number) {
         return axios.delete(this.mainUrl + `DeleteEmployee/${idEmploye}`)
+            .then(() => {
+                return true;
+            })
+            .catch(() => {
+                return null;
+            });
+    }
+
+    public getAllSocietys() {
+        return axios.get(this.mainUrl + `GetSocietys`)
+            .then(response => {
+                const data = response.data.societys;
+                return data as {
+                    hours_number: number,
+                    id: number,
+                    name: String
+                }[];
+            })
+            .catch(() => {
+                return null;
+            });
+    }
+
+    public addNewSociety(dataToSend : {name: String, hours_number: number}) {
+        return axios.post(this.mainUrl + "CreateSociety", dataToSend)
             .then(() => {
                 return true;
             })

@@ -7,6 +7,7 @@ import {useCookies} from "react-cookie";
 
 export const Header = observer(() => {
     const [, setCookie] = useCookies(["user"]);
+    const userInfo = appStore.getUserInfo;
 
     const logOut = () => {
         setCookie("user", null, {path: "/"});
@@ -18,6 +19,7 @@ export const Header = observer(() => {
             <HamburgerIcon isOpen={appStore.getIsOpenLeftSidebar} src={hamburgerIcon} alt=""
                            onClick={() => appStore.setIsOpenLeftSidebar()}/>
             <DivRight>
+                <Span>{userInfo?.first_name} {userInfo?.surname} {userInfo?.last_name}</Span>
                 <HamburgerIcon isOpen={true} src={exitIconAdd} alt="" onClick={logOut}/>
             </DivRight>
 
@@ -25,6 +27,11 @@ export const Header = observer(() => {
     );
 });
 
+const Span = styled.span.attrs({className: 'span-text'})`
+  color: black;
+  margin-top: 25px;
+  margin-right: 15px;
+`;
 
 const HamburgerIcon = styled.img.attrs({className: 'hamburger-icon'})<{ isOpen: boolean }>`
   height: 24px;
@@ -58,13 +65,13 @@ const HamburgerIcon = styled.img.attrs({className: 'hamburger-icon'})<{ isOpen: 
 const DivRight = styled.div`
   margin-left: auto;
   margin-right: 17px;
+  display: flex;
 `;
 
 const HeaderS = styled.div.attrs({className: 'header'})`
   height: 56px;
   align-items: center;
   display: flex;
-
   background-color: transparent;
   background: var(--color-background);
   padding-left: 17px;

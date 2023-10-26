@@ -90,7 +90,7 @@ export const EmployeeBody = observer(() => {
             </Wrapper>
             {
                 isOpenAddNewEmployee &&
-                <ModalAddNewEmployeeWindow setCloseModal={setIsOpenAddNewEmployee} isOpenModal={isOpenAddNewEmployee}
+                <ModalAddNewEmployeeWindow setCloseModal={setIsOpenAddNewEmployee}
                                            isOkAddEmployee={isOkAddEmployee}/>
             }
             {isOpenModalMessage &&

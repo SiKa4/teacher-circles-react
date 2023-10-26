@@ -6,54 +6,36 @@ import {ModalMessageWindow} from "./ModalMessageWindow.tsx";
 import {apiRequest} from "../../api_request/api-request.ts";
 import {strings} from "../../assets/strings/strings.ts";
 
-type ModalAddNewEmployeeWindow = HTMLAttributes<HTMLDivElement> & {
+type ModalAddNewCircle = HTMLAttributes<HTMLDivElement> & {
     setCloseModal: (isClose: boolean) => void;
-    isOkAddEmployee: (isOk: boolean) => void;
+    isOkAddNewCircle: (isOk: boolean) => void;
 };
 
-export const ModalAddNewEmployeeWindow = observer(
-    ({setCloseModal, isOkAddEmployee}: ModalAddNewEmployeeWindow) => {
+export const ModalAddNewCircle = observer(
+    ({setCloseModal, isOkAddNewCircle}: ModalAddNewCircle) => {
         const [isOpenModalMessage, setIsOpenModalMessage] = useState(false);
 
-        const [firstName, setFirstName] = useState('');
-        const [lastName, setLastName] = useState('');
-        const [surname, setSurname] = useState('');
-        const [login, setLogin] = useState('');
-        const [password, setPassword] = useState('');
-
-        /*useEffect(() => {
-            if (isOpenModal) {
-                (async () => {
-                    setIsDowning(true);
-                    await sleep(1500);
-                    setIsDowning(false);
-                    await sleep(1000);
-                    setCloseModal(false);
-                })();
-            }
-        }, [isOpenModal]);*/
+        const [name, setName] = useState('');
+        const [hours, setHourcs] = useState(0);
 
         const addNewEmployee = async () => {
-            if (firstName == '' || lastName == '' || surname == '' || login == '' || password == '') {
+            if (name == '' || !hours || hours == 0) {
                 setIsOpenModalMessage(true);
                 return;
             }
 
-            const isCreateEmloyee = await apiRequest.postEmployee({
-                username: login,
-                password: password,
-                surname: surname,
-                first_name: firstName,
-                last_name: lastName
+            const isCreateEmloyee = await apiRequest.addNewSociety({
+                name: name,
+                hours_number: hours,
             })
 
-            if(!isCreateEmloyee) {
+            if (!isCreateEmloyee) {
                 setIsOpenModalMessage(true);
                 return;
             }
 
             setCloseModal(false);
-            isOkAddEmployee(true);
+            isOkAddNewCircle(true);
         };
 
         return (
@@ -62,36 +44,19 @@ export const ModalAddNewEmployeeWindow = observer(
                     <WrapperBody>
                         <BodyModal>
                             <Title>
-                                <span>Добавление нового сотрудника</span>
+                                <span>Добавление нового кружка</span>
                                 <img src={closeIcon} onClick={() => setCloseModal(false)} alt=""/>
                             </Title>
                             <WrapperContent>
                                 <WrapperInput>
-                                    <InputName placeholder="Имя" value={firstName}
-                                               onChange={(e) => setFirstName(e.target.value)}></InputName>
-                                    <DownInputSpan>Имя</DownInputSpan>
+                                    <InputName placeholder="Наименование" value={name}
+                                               onChange={(e) => setName(e.target.value)}/>
+                                    <DownInputSpan>Наименование</DownInputSpan>
                                 </WrapperInput>
                                 <WrapperInput>
-                                    <InputName placeholder="Фамилия" value={lastName}
-                                               onChange={(e) => setLastName(e.target.value)}></InputName>
-                                    <DownInputSpan>Фамилия</DownInputSpan>
-                                </WrapperInput>
-                                <WrapperInput>
-                                    <InputName placeholder="Отчество" value={surname}
-                                               onChange={(e) => setSurname(e.target.value)}></InputName>
-                                    <DownInputSpan>Отчество</DownInputSpan>
-                                </WrapperInput>
-                            </WrapperContent>
-                            <WrapperContent>
-                                <WrapperInput>
-                                    <InputName placeholder="Логин" value={login}
-                                               onChange={(e) => setLogin(e.target.value)}></InputName>
-                                    <DownInputSpan>Логин</DownInputSpan>
-                                </WrapperInput>
-                                <WrapperInput>
-                                    <InputName placeholder="Пароль" type="password" value={password}
-                                               onChange={(e) => setPassword(e.target.value)}></InputName>
-                                    <DownInputSpan>Пароль</DownInputSpan>
+                                    <InputName placeholder="Кол-во часов" value={hours} type='number'
+                                               onChange={(e) => setHourcs(parseInt(e.target.value))}/>
+                                    <DownInputSpan>Кол-во часов</DownInputSpan>
                                 </WrapperInput>
                             </WrapperContent>
                             <WrapperInput>
@@ -109,7 +74,7 @@ export const ModalAddNewEmployeeWindow = observer(
                 </Wrapper>
 
                 {isOpenModalMessage &&
-                    <ModalMessageWindow setCloseModal={setIsOpenModalMessage} message={strings.errorAddEmloyee}
+                    <ModalMessageWindow setCloseModal={setIsOpenModalMessage} message={strings.errorAddCircle}
                                         icon={iconCheckError}
                                         isOpenModalMessage={true}/>}
             </>
@@ -118,12 +83,12 @@ export const ModalAddNewEmployeeWindow = observer(
     }
 );
 
-ModalAddNewEmployeeWindow.displayName = 'ModalAddNewEmployeeWindow';
+ModalAddNewCircle.displayName = 'ModalAddNewEmployeeWindow';
 
 const WrapperContent = styled.div.attrs({className: 'wrapper-content'})`
-  padding: 20px 10px 20px 10px;
+  padding: 20px 30px 20px 10px;
   display: flex;
-  gap: 5px;
+  gap: 30px;
   object-fit: contain;
 `;
 
@@ -165,7 +130,7 @@ const InputName = styled.input.attrs({className: 'input-name'})`
   padding: 9px 10px;
   border: 1px #79747e double;
   height: 35px;
-  width: 80%;
+  width: 100%;
   background: #f6f6f8;
   border-radius: 5px;
   text-indent: 5px;
@@ -196,7 +161,7 @@ const WrapperBody = styled.div.attrs({className: 'modal-wrapper-body'})`
 
 const BodyModal = styled.div.attrs({className: 'body-modal'})`
   background-color: var(--color-white);
-  width: 40vw;
+  width: 35vw;
   height: fit-content;
   border-radius: 15px;
   display: flex;
