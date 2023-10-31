@@ -127,9 +127,28 @@ class ApiRequest {
     public GetLessons(idUser: number) {
         return axios.get(this.mainUrl + `GetLessons/${idUser}`)
             .then(response => {
-                const data = response.data.employee;
-                //дописать
-                return {};
+                const data = response.data.groupedLessons;
+                return data as {
+                    weekDay: number,
+                    lessons: {
+                        id: number,
+                        room_number: number,
+                        start_date: String,
+                        week_day: number,
+                        societyName: String,
+                        employee_id: number
+                    }[]
+                }[];
+            })
+            .catch(() => {
+                return null;
+            });
+    }
+
+    public DeleteLesson(idLessons: number) {
+        return axios.delete(this.mainUrl + `DeleteLesson/${idLessons}`)
+            .then(() => {
+                return true;
             })
             .catch(() => {
                 return null;

@@ -10,7 +10,7 @@ import {ModalMessageWindow} from "./ModalMessageWindow.tsx";
 
 type ModalCreateLesson = HTMLAttributes<HTMLDivElement> & {
     setCloseModal: (isClose: boolean) => void;
-    numberDayOfTheWeek: number,
+    numberDayOfTheWeek: number;
     isOkAddNewLesson: (isOk: boolean) => void;
 };
 
@@ -37,7 +37,7 @@ export const ModalCreateLesson = observer(
             name: string
         } | null>(null);
 
-        const dayOfTheWeek = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС']
+        const dayOfTheWeek = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ']
 
         const [numberRoom, setNumberRoom] = useState(0);
         const [timeStarted, setTimeStarted] = useState('');
@@ -135,10 +135,10 @@ export const ModalCreateLesson = observer(
                                     <WrapperInput isFixedWidth={true}>
                                         <InputMaskK
                                             mask="99:99"
-                                            isValid={isValidTimeStarted}
                                             maskPlaceholder="XX:XX"
                                             placeholder="XX:XX"
                                             value={timeStarted}
+                                            isValid={isValidTimeStarted}
                                             onChange={(e) => setTimeStarted(e.target.value)}
                                         />
                                         <DownInputSpan>Время начала</DownInputSpan>
@@ -287,7 +287,7 @@ const DownInputSpan = styled.span.attrs({className: 'down-input-span'})`
 
 const WrapperBody = styled.div.attrs({className: 'modal-wrapper-body'})`
   position: relative;
-  top: 25%;
+  top: 10%;
 `;
 
 const BodyModal = styled.div.attrs({className: 'body-modal'})`

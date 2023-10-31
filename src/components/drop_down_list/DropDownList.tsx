@@ -65,7 +65,7 @@ const ToggleButton = styled.button`
 `;
 
 const DropdownList = styled.ul<{ isOpen: boolean }>`
-  position: absolute;
+  position: relative;
   list-style: none;
   margin: 0;
   background-color: #f1f1f1;

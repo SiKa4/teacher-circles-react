@@ -126,6 +126,7 @@ const Icon = styled.img`
   cursor: pointer;
   border-radius: 50px;
   padding: 13px;
+  transition: background-color 0.3s ease-in-out;
 
   &:hover {
     background: var(--color-span-background-hover);
