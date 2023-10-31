@@ -7,6 +7,7 @@ import {ModalCreateLesson} from "../../modal_windows/ModalCreateLesson.tsx";
 import {apiRequest} from "../../../api_request/api-request.ts";
 import {appStore} from "../../../data/stores/app.store.ts";
 import {ModalDelete} from "../../modal_windows/ModalAllowDeleteObject.tsx";
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 export const ScheduleBody = observer(() => {
     const [isOpenModalMessage, setIsOpenModalMessage] = useState(false);
@@ -92,7 +93,8 @@ export const ScheduleBody = observer(() => {
                                                 <DivWeekWrapper isActiveWeekLesson={selectedLesson != x.id}
                                                                 onClick={() => setSelectedLesson(x.id)}
                                                                 key={x.id}
-                                                                isOpen={selectedLesson == x.id}>
+                                                                isOpen={selectedLesson == x.id}
+                                                                style={{cursor: selectedLesson == x.id ? 'grab' : 'pointer'}}>
                                                     <SpanName>{x.societyName}</SpanName>
                                                     <SpanTime>Время: {x.start_date}</SpanTime>
                                                     <SpanRoom>№ кабинета: {x.room_number}</SpanRoom>
@@ -183,6 +185,7 @@ const DivWeekWrapper = styled.div.attrs({className: 'div-week-wrapper'})<{
   border: ${props => props.isBackgroundColor ? '' : 'var(--primary-btn) 0.2px solid'};
   border-radius: ${props => props.isBackgroundColor ? '' : '20px'};
   padding: ${props => props.isBackgroundColor ? '0' : '10px'};
+  user-select: none;
 
   ${({isActive}) => isActive && css`
     border-radius: 0 0 20px 20px;
@@ -198,8 +201,6 @@ const DivWeekWrapper = styled.div.attrs({className: 'div-week-wrapper'})<{
   `}
 
   ${({isActiveWeekLesson}) => isActiveWeekLesson && css`
-    cursor: pointer;
-
     &:hover {
       background: #d9d9d9;
       cursor: pointer;

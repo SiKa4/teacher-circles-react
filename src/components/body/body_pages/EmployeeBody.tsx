@@ -12,7 +12,7 @@ export const EmployeeBody = observer(() => {
     const [isOpenAddNewEmployee, setIsOpenAddNewEmployee] = useState(false);
     const [isOpenModalMessage, setIsOpenModalMessage] = useState(false);
     const [messageModelWindow, setMessageModalWindow] = useState('');
-    const [iconMessage, setIconMessage] = useState(iconCheckError);
+    const [iconMessage, setIconMessage] = useState(iconCheckOk);
     const [isOpenModalDelete, setInOpenModalDelete] = useState(false);
     const [selectedIdEmployee, setSelectedIdEmployeee] = useState<number | null>(null);
 

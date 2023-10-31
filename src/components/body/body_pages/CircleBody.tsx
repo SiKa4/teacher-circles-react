@@ -2,16 +2,20 @@ import {observer} from "mobx-react-lite";
 import {useEffect, useState} from "react";
 import {apiRequest} from "../../../api_request/api-request.ts";
 import styled from "styled-components";
-import {changeIcon, iconCheckOk, plusIcon, removeBasketIcon} from "../../../assets/img.ts";
+import {changeIcon, iconCheckError, iconCheckOk, plusIcon, removeBasketIcon} from "../../../assets/img.ts";
 import {ModalMessageWindow} from "../../modal_windows/ModalMessageWindow.tsx";
 import {ModalAddNewCircle} from "../../modal_windows/ModalAddNewCircle.tsx";
 import {strings} from "../../../assets/strings/strings.ts";
 import {appStore} from "../../../data/stores/app.store.ts";
+import {ModalDelete} from "../../modal_windows/ModalAllowDeleteObject.tsx";
 
 export const CircleBody = observer(() => {
     const [isOpenAddNewCircle, setIsOpenAddNewCircle] = useState(false);
     const [isOpenModalMessage, setIsOpenModalMessage] = useState(false);
     const [messageModelWindow, setMessageModalWindow] = useState('');
+    const [isOpenModalDelete, setInOpenModalDelete] = useState(false);
+    const [selectedIdCircle, setSelectedIdCircle] = useState<number | null>(null);
+    const [iconMessage, setIconMessage] = useState(iconCheckOk);
 
     const [circle, setCircle] = useState<{
         hoursNumber: number,
@@ -38,6 +42,26 @@ export const CircleBody = observer(() => {
         getAllCircle();
     }
 
+    const onClickDeleteCircle = (idCircle: number) => {
+        setSelectedIdCircle(idCircle);
+        setInOpenModalDelete(true);
+    }
+
+    const callbackDelete = async () => {
+        if (!selectedIdCircle) return
+        const isOk = await apiRequest.deleteCircle(selectedIdCircle);
+        await getAllCircle();
+
+        if (isOk) {
+            setMessageModalWindow('Кружок успешно удален.')
+            setIconMessage(iconCheckOk);
+        } else {
+            setMessageModalWindow('Кружок не был удален.')
+            setIconMessage(iconCheckError);
+        }
+        setIsOpenModalMessage(true);
+    };
+
     return (
         <>
             <Wrapper>
@@ -62,7 +86,7 @@ export const CircleBody = observer(() => {
                                 <TableCell>{x.name}</TableCell>
                                 <TableCell>{x.hoursNumber}</TableCell>
                                 <TableCell><Icon src={changeIcon}/></TableCell>
-                                <TableCell><Icon src={removeBasketIcon}/></TableCell>
+                                <TableCell><Icon src={removeBasketIcon} onClick={() => onClickDeleteCircle(x.id)}/></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -74,8 +98,12 @@ export const CircleBody = observer(() => {
             }
             {isOpenModalMessage &&
                 <ModalMessageWindow setCloseModal={setIsOpenModalMessage} message={messageModelWindow}
-                                    icon={iconCheckOk}
+                                    icon={iconMessage}
                                     isOpenModalMessage={true}/>}
+            {
+                isOpenModalDelete &&
+                <ModalDelete setCloseModal={setInOpenModalDelete} callBackDelete={callbackDelete}/>
+            }
         </>
     );
 });
@@ -110,7 +138,7 @@ const TableHeader = styled.thead`
 `;
 
 const TableHeaderCell = styled.th`
-  padding: 10px 0px;
+  padding: 10px 0;
   text-align: center;
 `;
 

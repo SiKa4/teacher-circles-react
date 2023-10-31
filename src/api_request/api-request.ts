@@ -172,6 +172,16 @@ class ApiRequest {
                 return null;
             });
     }
+
+    public deleteCircle(idCircle: number) {
+        return axios.delete(this.mainUrl + `DeleteSociety/${idCircle}`)
+            .then(() => {
+                return true;
+            })
+            .catch(() => {
+                return null;
+            });
+    }
 }
 
 export const apiRequest = new ApiRequest();
