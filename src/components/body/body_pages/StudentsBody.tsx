@@ -1,74 +1,73 @@
 import {observer} from "mobx-react-lite";
-import {changeIcon, iconCheckError, iconCheckOk, plusIcon, removeBasketIcon} from "../../../assets/img.ts";
+import {EmployeeBody} from "./EmployeeBody.tsx";
 import styled from "styled-components";
+import {changeIcon, iconCheckError, iconCheckOk, plusIcon, removeBasketIcon} from "../../../assets/img.ts";
 import {useEffect, useState} from "react";
 import {apiRequest} from "../../../api_request/api-request.ts";
-import {ModalAddNewEmployeeWindow} from "../../modal_windows/ModalAddNewEmployeeWindow.tsx";
 import {ModalMessageWindow} from "../../modal_windows/ModalMessageWindow.tsx";
-import {strings} from "../../../assets/strings/strings.ts";
 import {ModalDelete} from "../../modal_windows/ModalAllowDeleteObject.tsx";
+import {ModalAddNewStudent} from "../../modal_windows/ModalAddNewStudent.tsx";
 
-export const EmployeeBody = observer(() => {
-    const [isOpenAddNewEmployee, setIsOpenAddNewEmployee] = useState(false);
+export const StudentsBody = observer(() => {
+    const [isOpenAddNewStudent, setIsOpenAddNewStudent] = useState(false);
     const [isOpenModalMessage, setIsOpenModalMessage] = useState(false);
     const [messageModelWindow, setMessageModalWindow] = useState('');
     const [iconMessage, setIconMessage] = useState(iconCheckOk);
     const [isOpenModalDelete, setInOpenModalDelete] = useState(false);
-    const [selectedIdEmployee, setSelectedIdEmployeee] = useState<number | null>(null);
+    const [selectedIdStudent, setSelectedIdStudent] = useState<number | null>(null);
 
-    const [employees, setEmployees] = useState<{
-        first_name: string,
-        last_name: string,
-        surname: string,
-        id: number, id_role: number,
-        password: string, username: string,
-    }[] | null>(null);
+    const [students, setStudents] = useState<{
+        id: number,
+        surname: String,
+        first_name: String,
+        last_name: String,
+        birth_date: String
+    }[] | null>();
 
     useEffect(() => {
-        getAllEmployees();
+        getStudents();
     }, []);
 
-    const getAllEmployees = async () => {
-        const employees = await apiRequest.getAllEmployee();
-        setEmployees(employees);
+    const getStudents = async () => {
+        setStudents(await apiRequest.getAllStudents());
     };
 
-    const onClickAddNewEmployee = () => {
-        setIsOpenAddNewEmployee(true);
-    };
+    const isOkAddNewStudent = (isOk: boolean) => {
+        setMessageModalWindow(isOk ? "Ученик успешно добавлен." : "Ученик не был добавлен.");
 
-    const isOkAddEmployee = (isOk: boolean) => {
-        if (isOk) setMessageModalWindow(strings.completeAddEmloyee);
-        else setMessageModalWindow(strings.errorAddEmloyee);
+        setIconMessage(isOk ? iconCheckOk : iconCheckError);
 
         setIsOpenModalMessage(true);
-        getAllEmployees();
-    };
+        getStudents();
+    }
 
-    const onClickDeleteEmployee = async (idEmployee: number) => {
-        setSelectedIdEmployeee(idEmployee);
+    const onClickDeleteStudent = async (idStudent: number) => {
+        setSelectedIdStudent(idStudent);
         setInOpenModalDelete(true);
     };
 
     const callbackDelete = async () => {
-        if (!selectedIdEmployee) return
-        const isOk = await apiRequest.deleteEmployeByid(selectedIdEmployee);
-        await getAllEmployees();
+        if (!selectedIdStudent) return;
+
+        const isOk = await apiRequest.DeleteStudent(selectedIdStudent);
+
+        await getStudents();
 
         if (isOk) {
-            setMessageModalWindow('Пользователь успешно удален.')
+            setMessageModalWindow('Ученик успешно удален.')
             setIconMessage(iconCheckOk);
         } else {
-            setMessageModalWindow('Пользователь не был удален.')
+            setMessageModalWindow('Ученик не был удален.')
             setIconMessage(iconCheckError);
         }
+
         setIsOpenModalMessage(true);
     }
 
     return (
         <>
             <Wrapper>
-                <Btn onClick={onClickAddNewEmployee}>
+                <Btn onClick={() => setIsOpenAddNewStudent(true)}>
                     <img src={plusIcon} alt=""/>
                 </Btn>
                 <Table>
@@ -78,49 +77,46 @@ export const EmployeeBody = observer(() => {
                             <TableHeaderCell>Имя</TableHeaderCell>
                             <TableHeaderCell>Фамилия</TableHeaderCell>
                             <TableHeaderCell>Отчество</TableHeaderCell>
-                            <TableHeaderCell>Логин</TableHeaderCell>
-                            <TableHeaderCell>Пароль</TableHeaderCell>
+                            <TableHeaderCell>Дата рождения</TableHeaderCell>
                             <TableHeaderCell></TableHeaderCell>
                             <TableHeaderCell></TableHeaderCell>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {employees && employees.map((x, i) => (
+                        {students && students.map((x, i) => (
                             <TableRow key={i}>
                                 <TableCell>{x.id}</TableCell>
                                 <TableCell>{x.first_name}</TableCell>
                                 <TableCell>{x.last_name}</TableCell>
                                 <TableCell>{x.surname}</TableCell>
-                                <TableCell>{x.username}</TableCell>
-                                <TableCell>{x.password}</TableCell>
+                                <TableCell>{x.birth_date}</TableCell>
                                 <TableCell><Icon src={changeIcon}/></TableCell>
-                                <TableCell><Icon src={removeBasketIcon}
-                                                 onClick={() => onClickDeleteEmployee(x.id)}/></TableCell>
+                                <TableCell onClick={() => onClickDeleteStudent(x.id)}><Icon
+                                    src={removeBasketIcon}/></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </Wrapper>
-            {
-                isOpenAddNewEmployee &&
-                <ModalAddNewEmployeeWindow setCloseModal={setIsOpenAddNewEmployee}
-                                           isOkAddEmployee={isOkAddEmployee}/>
-            }
             {isOpenModalMessage &&
                 <ModalMessageWindow setCloseModal={setIsOpenModalMessage}
                                     message={messageModelWindow}
                                     icon={iconMessage}
-                                    isOpenModalMessage={true}/>}
+                                    isOpenModalMessage={true}/>
+            }
             {
                 isOpenModalDelete &&
                 <ModalDelete setCloseModal={setInOpenModalDelete} callBackDelete={callbackDelete}/>
             }
+            {
+                isOpenAddNewStudent &&
+                <ModalAddNewStudent setCloseModal={setIsOpenAddNewStudent} isOkAddStudents={isOkAddNewStudent}/>
+            }
         </>
-
     );
 });
 
-EmployeeBody.displayName = 'EmployeeBody';
+EmployeeBody.displayName = 'StudentsBody';
 
 const Wrapper = styled.div`
   padding-top: 20px;

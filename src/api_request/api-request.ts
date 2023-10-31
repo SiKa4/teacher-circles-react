@@ -95,6 +95,23 @@ class ApiRequest {
             });
     }
 
+    public getAllStudents() {
+        return axios.get(this.mainUrl + `GetStudents`)
+            .then(response => {
+                const data = response.data.students;
+                return data as {
+                    id: number,
+                    surname: String,
+                    first_name: String,
+                    last_name: String,
+                    birth_date: String
+                }[];
+            })
+            .catch(() => {
+                return null;
+            });
+    }
+
     public addNewSociety(dataToSend: {
         name: string,
         hours_number: number
@@ -186,8 +203,32 @@ class ApiRequest {
     public UpdateLesson(lessonData: {
         week_day: number,
     }, idLesson: number) {
-        console.log(lessonData.week_day, idLesson);
         return axios.put(this.mainUrl + `UpdateLesson/${idLesson}`, lessonData)
+            .then(() => {
+                return true;
+            })
+            .catch(() => {
+                return null;
+            });
+    }
+
+    public DeleteStudent(idStudent: number) {
+        return axios.delete(this.mainUrl + `DeleteStudent/${idStudent}`)
+            .then(() => {
+                return true;
+            })
+            .catch(() => {
+                return null;
+            });
+    }
+
+    public postStudent(student: {
+        surname: string,
+        first_name: string,
+        last_name: string,
+        birth_date: string
+    }) {
+        return axios.post(this.mainUrl + "CreateStudent", student)
             .then(() => {
                 return true;
             })

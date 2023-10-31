@@ -94,7 +94,7 @@ export const ScheduleBody = observer(() => {
                     <WrapperContent>
                         {dayOfTheWeek.map((day, dayIndex) => (
                             <Droppable droppableId={`${dayIndex}`} key={dayIndex}
-                                       isDropDisabled={!getLessonsInWeekDay(dayIndex + 1)}>
+                                       isDropDisabled={!getLessonsInWeekDay(dayIndex + 1)} >
                                 {(provided) => (
                                     <DayOfTheWeek ref={provided.innerRef}>
                                         <DivWeekWrapper isBackgroundColor={true}>
@@ -107,12 +107,14 @@ export const ScheduleBody = observer(() => {
                                                         key={`${lesson.id}`}
                                                         draggableId={`${lesson.id}`}
                                                         index={lesson.id}
+                                                        isDragDisabled={user?.id_role != 1}
                                                     >
                                                         {(provided, snapshot) => (
                                                             <DivWeekWrapper
                                                                 key={`${lesson.id}`}
                                                                 isActiveWeekLesson={selectedLesson !== lesson.id}
-                                                                onClick={() => setSelectedLesson(lesson.id)}
+                                                                onClick={user?.id_role == 1 ? () => setSelectedLesson(lesson.id) : () => {
+                                                                }}
                                                                 isOpen={selectedLesson === lesson.id}
                                                                 ref={provided.innerRef}
                                                                 {...provided.draggableProps}
@@ -141,13 +143,16 @@ export const ScheduleBody = observer(() => {
                                                 ))}
                                             {provided.placeholder}
                                         </WrapperContentWeek>
-                                        <DivWeekWrapper
-                                            onClick={() => onClickAddLesson(dayIndex + 1)}
-                                            isBackgroundColor={true}
-                                            isActive={true}
-                                        >
-                                            <Icon src={plusIcon}/>
-                                        </DivWeekWrapper>
+                                        {user?.id_role == 1 &&
+                                            <DivWeekWrapper
+                                                onClick={() => onClickAddLesson(dayIndex + 1)}
+                                                isBackgroundColor={true}
+                                                isActive={true}
+                                            >
+                                                <Icon src={plusIcon}/>
+                                            </DivWeekWrapper>
+                                        }
+
                                     </DayOfTheWeek>
                                 )}
                             </Droppable>

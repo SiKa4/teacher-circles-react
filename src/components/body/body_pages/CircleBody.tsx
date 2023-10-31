@@ -16,6 +16,7 @@ export const CircleBody = observer(() => {
     const [isOpenModalDelete, setInOpenModalDelete] = useState(false);
     const [selectedIdCircle, setSelectedIdCircle] = useState<number | null>(null);
     const [iconMessage, setIconMessage] = useState(iconCheckOk);
+    const user = appStore.getUserInfo;
 
     const [circle, setCircle] = useState<{
         hoursNumber: number,
@@ -28,7 +29,7 @@ export const CircleBody = observer(() => {
     }, []);
 
     const getAllCircle = async () => {
-        if(!appStore.getUserInfo) return;
+        if (!appStore.getUserInfo) return;
 
         const circles = await apiRequest.getAllSocietys(appStore.getUserInfo?.id!);
         setCircle(circles);
@@ -65,9 +66,14 @@ export const CircleBody = observer(() => {
     return (
         <>
             <Wrapper>
-                <Btn onClick={() => setIsOpenAddNewCircle(true)}>
-                    <img src={plusIcon} alt=""/>
-                </Btn>
+                {
+                    user?.id_role == 1 &&
+                    <Btn onClick={() => setIsOpenAddNewCircle(true)}>
+                        <img src={plusIcon} alt=""/>
+                    </Btn>
+
+                }
+
 
                 <Table>
                     <TableHeader>
@@ -75,8 +81,15 @@ export const CircleBody = observer(() => {
                             <TableHeaderCell>Id</TableHeaderCell>
                             <TableHeaderCell>Наименование</TableHeaderCell>
                             <TableHeaderCell>Кол-во часов</TableHeaderCell>
+                            {
+                                user?.id_role == 1 &&
+                                <>
+                                    <TableHeaderCell></TableHeaderCell>
+
+                                </>
+                            }
                             <TableHeaderCell></TableHeaderCell>
-                            <TableHeaderCell></TableHeaderCell>
+
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -85,8 +98,19 @@ export const CircleBody = observer(() => {
                                 <TableCell>{x.id}</TableCell>
                                 <TableCell>{x.name}</TableCell>
                                 <TableCell>{x.hoursNumber}</TableCell>
-                                <TableCell><Icon src={changeIcon}/></TableCell>
-                                <TableCell><Icon src={removeBasketIcon} onClick={() => onClickDeleteCircle(x.id)}/></TableCell>
+                                {
+                                    user?.id_role == 1 &&
+                                    <>
+                                        <TableCell><Icon src={changeIcon}/></TableCell>
+                                        <TableCell><Icon src={removeBasketIcon}
+                                                         onClick={() => onClickDeleteCircle(x.id)}/></TableCell>
+                                    </>
+
+                                }
+                                {user?.id_role != 1 &&
+                                    <TableCell>
+                                        <Icon src={changeIcon}/>
+                                    </TableCell>}
                             </TableRow>
                         ))}
                     </TableBody>
@@ -145,7 +169,6 @@ const TableHeaderCell = styled.th`
 const TableBody = styled.tbody``;
 
 const TableRow = styled.tr`
-
 `;
 
 const Icon = styled.img`
