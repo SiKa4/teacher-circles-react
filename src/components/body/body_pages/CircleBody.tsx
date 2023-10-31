@@ -6,6 +6,7 @@ import {changeIcon, iconCheckOk, plusIcon, removeBasketIcon} from "../../../asse
 import {ModalMessageWindow} from "../../modal_windows/ModalMessageWindow.tsx";
 import {ModalAddNewCircle} from "../../modal_windows/ModalAddNewCircle.tsx";
 import {strings} from "../../../assets/strings/strings.ts";
+import {appStore} from "../../../data/stores/app.store.ts";
 
 export const CircleBody = observer(() => {
     const [isOpenAddNewCircle, setIsOpenAddNewCircle] = useState(false);
@@ -13,7 +14,7 @@ export const CircleBody = observer(() => {
     const [messageModelWindow, setMessageModalWindow] = useState('');
 
     const [circle, setCircle] = useState<{
-        hours_number: number,
+        hoursNumber: number,
         id: number,
         name: String
     }[] | null>(null);
@@ -23,7 +24,7 @@ export const CircleBody = observer(() => {
     }, []);
 
     const getAllCircle = async () => {
-        const circles = await apiRequest.getAllSocietys();
+        const circles = await apiRequest.getAllSocietys(appStore.getUserInfo?.id!);
         setCircle(circles);
     };
 
@@ -57,7 +58,7 @@ export const CircleBody = observer(() => {
                             <TableRow key={i}>
                                 <TableCell>{x.id}</TableCell>
                                 <TableCell>{x.name}</TableCell>
-                                <TableCell>{x.hours_number}</TableCell>
+                                <TableCell>{x.hoursNumber}</TableCell>
                                 <TableCell><Icon src={changeIcon}/></TableCell>
                                 <TableCell><Icon src={removeBasketIcon}/></TableCell>
                             </TableRow>
@@ -82,7 +83,7 @@ CircleBody.displayName = 'CircleBody';
 const Wrapper = styled.div`
   padding-top: 20px;
   width: 100%;
-  height: 100%;
+  height: fit-content;
 `;
 
 const Btn = styled.button.attrs({className: 'btn-primary'})`
@@ -91,12 +92,14 @@ const Btn = styled.button.attrs({className: 'btn-primary'})`
   margin-left: auto;
   margin-right: 20px;
   margin-bottom: 10px;
+  position: absolute;
+  right: 1.5%;
 `;
 
 const Table = styled.table`
   border-collapse: collapse;
   width: 70%;
-  margin: 0 auto;
+  margin: 60px auto 0;
 `;
 
 const TableHeader = styled.thead`

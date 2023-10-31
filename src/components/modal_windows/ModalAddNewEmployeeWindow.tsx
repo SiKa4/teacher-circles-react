@@ -183,15 +183,15 @@ const InputName = styled.input.attrs({className: 'input-name'})`
   }
 `;
 
+
 const DownInputSpan = styled.span.attrs({className: 'down-input-span'})`
   font-size: 12px;
   margin-left: 15px;
 `;
 
 const WrapperBody = styled.div.attrs({className: 'modal-wrapper-body'})`
-  position: fixed;
-  right: 25vw;
-  top: 25vh;
+  position: relative;
+  top: 25%;
 `;
 
 const BodyModal = styled.div.attrs({className: 'body-modal'})`

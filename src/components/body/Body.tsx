@@ -18,10 +18,10 @@ Body.displayName = 'EmployeeBody';
 const Wrapper = styled.div.attrs({className: 'wrapper-body'})`
   background: var(--color-white);
   width: calc(100% - 15px);
-  height: calc(100vh - 70px);
+  height: calc(100vh - 80px);
   border-radius: 20px;
   box-shadow: 5px 5px 5px #cecece;
-  overflow: hidden;
   margin-top: 10px;
+  overflow: auto;
 `;
 

@@ -5,7 +5,7 @@ import {useCookies} from "react-cookie";
 import {useEffect, useState} from "react";
 import {appStore} from "./data/stores/app.store.ts";
 import {apiRequest} from "./api_request/api-request.ts";
-import styled, {keyframes} from "styled-components";
+import styled from "styled-components";
 
 export const App = observer(() => {
     const [cookies,] = useCookies(["user"]);
@@ -36,15 +36,14 @@ export const App = observer(() => {
     return (
         <div className="App">
             {isLoading ? (
-                <div className="loading-indicator">Loading...</div>
+                <LoadingWrapper>
+                    <TextSpan>Loading...</TextSpan>
+                </LoadingWrapper>
             ) : userInfo ? (
                 <MainPage/>
             ) : (
                 <Authorization/>
             )}
-            <LoadingWrapper>
-                <TextSpan>Loading...</TextSpan>
-            </LoadingWrapper>
         </div>
     )
 });

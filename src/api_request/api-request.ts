@@ -1,7 +1,7 @@
 import axios from "axios";
 
 class ApiRequest {
-    mainUrl = "http://192.168.126.41:5001/api/";
+    mainUrl = "http://192.168.0.51:5001/api/";
 
     public getUserByLoginPassword(login: string, password: string) {
         const dataToSend = {
@@ -78,12 +78,12 @@ class ApiRequest {
             });
     }
 
-    public getAllSocietys() {
-        return axios.get(this.mainUrl + `GetSocietys`)
+    public getAllSocietys(id: number) {
+        return axios.get(this.mainUrl + `GetSocietys/${id}`)
             .then(response => {
-                const data = response.data.societys;
+                const data = response.data.societies;
                 return data as {
-                    hours_number: number,
+                    hoursNumber: number,
                     id: number,
                     name: String
                 }[];

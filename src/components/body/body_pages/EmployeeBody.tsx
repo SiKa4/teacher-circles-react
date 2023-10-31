@@ -107,7 +107,7 @@ EmployeeBody.displayName = 'EmployeeBody';
 const Wrapper = styled.div`
   padding-top: 20px;
   width: 100%;
-  height: 100%;
+  height: fit-content;
 `;
 
 const Btn = styled.button.attrs({className: 'btn-primary'})`
@@ -116,12 +116,14 @@ const Btn = styled.button.attrs({className: 'btn-primary'})`
   margin-left: auto;
   margin-right: 20px;
   margin-bottom: 10px;
+  position: absolute;
+  right: 1.5%;
 `;
 
 const Table = styled.table`
   border-collapse: collapse;
   width: 70%;
-  margin: 0 auto;
+  margin: 60px auto 0;
 `;
 
 const TableHeader = styled.thead`
