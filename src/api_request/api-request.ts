@@ -154,6 +154,24 @@ class ApiRequest {
                 return null;
             });
     }
+
+    public GetStatistics() {
+        return axios.get(this.mainUrl + `GetStatics`)
+            .then(response => {
+                return response.data.statics as {
+                    totalVisits: number,
+                    totalAbsent: number,
+                    totalLessons: number,
+                    totalSocieties: number,
+                    totalTeachers: number,
+                    attendancePercent: number,
+                    absentPercent: number
+                };
+            })
+            .catch(() => {
+                return null;
+            });
+    }
 }
 
 export const apiRequest = new ApiRequest();
