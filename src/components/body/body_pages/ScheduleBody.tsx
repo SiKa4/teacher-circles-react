@@ -7,7 +7,7 @@ import {ModalCreateLesson} from "../../modal_windows/ModalCreateLesson.tsx";
 import {apiRequest} from "../../../api_request/api-request.ts";
 import {appStore} from "../../../data/stores/app.store.ts";
 import {ModalDelete} from "../../modal_windows/ModalAllowDeleteObject.tsx";
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 
 export const ScheduleBody = observer(() => {
     const [isOpenModalMessage, setIsOpenModalMessage] = useState(false);
@@ -75,53 +75,88 @@ export const ScheduleBody = observer(() => {
         await getLessons();
     }
 
+    const onDragEnd = async (result: any) => {
+        if (!result.destination) {
+            return;
+        }
+
+        const weekDay = parseInt(result.destination.droppableId) + 1;
+        const lessonDragId = parseInt(result.draggableId);
+
+        await apiRequest.UpdateLesson({week_day: weekDay}, lessonDragId)
+        await getLessons();
+    };
+
     return (
         <>
-            <Wrapper>
-                <WrapperContent>
-                    {
-                        dayOfTheWeek.map((x, i) => (
-                            <DayOfTheWeek key={i}>
-                                <DivWeekWrapper isBackgroundColor={true}>
-                                    <SpanTextWeek>{x}</SpanTextWeek>
-                                </DivWeekWrapper>
-                                {
-                                    <WrapperContentWeek>
-                                        {
-                                            getLessonsInWeekDay(i + 1)
-                                            && getLessonsInWeekDay(i + 1)!.map((x) => (
-                                                <DivWeekWrapper isActiveWeekLesson={selectedLesson != x.id}
-                                                                onClick={() => setSelectedLesson(x.id)}
-                                                                key={x.id}
-                                                                isOpen={selectedLesson == x.id}
-                                                                style={{cursor: selectedLesson == x.id ? 'grab' : 'pointer'}}>
-                                                    <SpanName>{x.societyName}</SpanName>
-                                                    <SpanTime>Время: {x.start_date}</SpanTime>
-                                                    <SpanRoom>№ кабинета: {x.room_number}</SpanRoom>
-                                                    {
-                                                        selectedLesson == x.id &&
-                                                        <div style={{display: "flex", gap: '20px'}}>
-                                                            <Icon src={changeIcon} isHovered={true}/>
-                                                            <Icon src={removeBasketIcon} isHovered={true}
-                                                                  onClick={() => setInOpenModalDelete(true)}/>
-                                                        </div>
+            <DragDropContext onDragEnd={onDragEnd}>
+                <Wrapper>
+                    <WrapperContent>
+                        {dayOfTheWeek.map((day, dayIndex) => (
+                            <Droppable droppableId={`${dayIndex}`} key={dayIndex}
+                                       isDropDisabled={!getLessonsInWeekDay(dayIndex + 1)}>
+                                {(provided) => (
+                                    <DayOfTheWeek ref={provided.innerRef}>
+                                        <DivWeekWrapper isBackgroundColor={true}>
+                                            <SpanTextWeek>{day}</SpanTextWeek>
+                                        </DivWeekWrapper>
+                                        <WrapperContentWeek>
+                                            {getLessonsInWeekDay(dayIndex + 1) &&
+                                                getLessonsInWeekDay(dayIndex + 1)!.map((lesson, lessonIndex) => (
+                                                    <Draggable
+                                                        key={`${lesson.id}`}
+                                                        draggableId={`${lesson.id}`}
+                                                        index={lesson.id}
+                                                    >
+                                                        {(provided, snapshot) => (
+                                                            <DivWeekWrapper
+                                                                key={`${lesson.id}`}
+                                                                isActiveWeekLesson={selectedLesson !== lesson.id}
+                                                                onClick={() => setSelectedLesson(lesson.id)}
+                                                                isOpen={selectedLesson === lesson.id}
+                                                                ref={provided.innerRef}
+                                                                {...provided.draggableProps}
+                                                                {...provided.dragHandleProps}
+                                                                style={{
+                                                                    ...provided.draggableProps.style,
+                                                                    cursor: snapshot.isDragging ? 'grabbing' : 'pointer',
+                                                                    backgroundColor: snapshot.isDragging ? '#d9d9d9' : '',
+                                                                }}
+                                                            >
+                                                                <SpanName>{lesson.societyName}</SpanName>
+                                                                <SpanTime>Время: {lesson.start_date}</SpanTime>
+                                                                <SpanRoom>№
+                                                                    кабинета: {lesson.room_number}</SpanRoom>
+                                                                {selectedLesson === lesson.id && (
+                                                                    <div style={{display: 'flex', gap: '20px'}}>
+                                                                        <Icon src={changeIcon} isHovered={true}/>
+                                                                        <Icon src={removeBasketIcon}
+                                                                              isHovered={true}
+                                                                              onClick={() => setInOpenModalDelete(true)}/>
+                                                                    </div>
+                                                                )}
+                                                            </DivWeekWrapper>
+                                                        )}
+                                                    </Draggable>
+                                                ))}
+                                            {provided.placeholder}
+                                        </WrapperContentWeek>
+                                        <DivWeekWrapper
+                                            onClick={() => onClickAddLesson(dayIndex + 1)}
+                                            isBackgroundColor={true}
+                                            isActive={true}
+                                        >
+                                            <Icon src={plusIcon}/>
+                                        </DivWeekWrapper>
+                                    </DayOfTheWeek>
+                                )}
+                            </Droppable>
+                        ))}
 
-                                                    }
-                                                </DivWeekWrapper>
-                                            ))
-                                        }
-                                    </WrapperContentWeek>
-                                }
-                                <DivWeekWrapper onClick={() => onClickAddLesson(i + 1)} isBackgroundColor={true}
-                                                isActive={true}>
-                                    <Icon src={plusIcon}/>
-                                </DivWeekWrapper>
-                            </DayOfTheWeek>
-                        ))
-                    }
+                    </WrapperContent>
+                </Wrapper>
+            </DragDropContext>
 
-                </WrapperContent>
-            </Wrapper>
             {isOpenModalMessage &&
                 <ModalMessageWindow setCloseModal={setIsOpenModalMessage}
                                     message={messageModelWindow}
@@ -236,7 +271,6 @@ const DayOfTheWeek = styled.div.attrs({className: 'day-of-the-week'})`
   color: white;
   height: 100%;
   max-height: calc(100vh - 150px);
-  transition: all 1s ease-in-out;
 `;
 
 

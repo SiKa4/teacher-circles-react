@@ -182,6 +182,19 @@ class ApiRequest {
                 return null;
             });
     }
+
+    public UpdateLesson(lessonData: {
+        week_day: number,
+    }, idLesson: number) {
+        console.log(lessonData.week_day, idLesson);
+        return axios.put(this.mainUrl + `UpdateLesson/${idLesson}`, lessonData)
+            .then(() => {
+                return true;
+            })
+            .catch(() => {
+                return null;
+            });
+    }
 }
 
 export const apiRequest = new ApiRequest();
