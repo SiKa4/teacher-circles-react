@@ -40,11 +40,13 @@ class ApiRequest {
             .then(response => {
                 const data = response.data.employes;
                 return (data as {
-                    first_name: String,
-                    last_name: String,
-                    surname: String,
-                    id: number, id_role: number,
-                    password: string, username: string
+                    first_name: string,
+                    last_name: string,
+                    surname: string,
+                    id: number,
+                    id_role: number,
+                    password: string,
+                    username: string
                 }[]);
             })
             .catch(() => {
@@ -53,11 +55,11 @@ class ApiRequest {
     }
 
     public postEmployee(employee: {
-        username: String,
-        password: String,
-        surname: String,
-        first_name: String,
-        last_name: String
+        username: string,
+        password: string,
+        surname: string,
+        first_name: string,
+        last_name: string
     }) {
         return axios.post(this.mainUrl + "CreateEmployee", employee)
             .then(() => {
@@ -85,7 +87,7 @@ class ApiRequest {
                 return data as {
                     hoursNumber: number,
                     id: number,
-                    name: String
+                    name: string
                 }[];
             })
             .catch(() => {
@@ -93,10 +95,41 @@ class ApiRequest {
             });
     }
 
-    public addNewSociety(dataToSend : {name: String, hours_number: number}) {
+    public addNewSociety(dataToSend: {
+        name: string,
+        hours_number: number
+    }) {
         return axios.post(this.mainUrl + "CreateSociety", dataToSend)
             .then(() => {
                 return true;
+            })
+            .catch(() => {
+                return null;
+            });
+    }
+
+    public createLesson(lessonData: {
+        room_number: number,
+        start_date: string,
+        week_day: number,
+        employee_id: number,
+        society_id: number
+    }) {
+        return axios.post(this.mainUrl + "CreateLesson", lessonData)
+            .then(() => {
+                return true;
+            })
+            .catch(() => {
+                return null;
+            });
+    }
+
+    public GetLessons(idUser: number) {
+        return axios.get(this.mainUrl + `GetLessons/${idUser}`)
+            .then(response => {
+                const data = response.data.employee;
+                //дописать
+                return {};
             })
             .catch(() => {
                 return null;

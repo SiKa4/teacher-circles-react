@@ -19,6 +19,10 @@ export const ScheduleBody = observer(() => {
         setIsOpenModalCreateLesson(true);
     };
 
+    const addNewLessonCallback = (isOk: boolean) => {
+
+    }
+
     return (
         <>
             <Wrapper>
@@ -39,13 +43,16 @@ export const ScheduleBody = observer(() => {
                 </WrapperContent>
             </Wrapper>
             {isOpenModalMessage &&
-                <ModalMessageWindow setCloseModal={setIsOpenModalMessage} message={messageModelWindow}
+                <ModalMessageWindow setCloseModal={setIsOpenModalMessage}
+                                    message={messageModelWindow}
                                     icon={iconCheckOk}
                                     isOpenModalMessage={true}/>
             }
             {
                 isOpenModalCreateLesson &&
-                <ModalCreateLesson setCloseModal={setIsOpenModalCreateLesson} numberDayOfTheWeek={numberDayOfTheWeek}/>
+                <ModalCreateLesson setCloseModal={setIsOpenModalCreateLesson}
+                                   numberDayOfTheWeek={numberDayOfTheWeek}
+                                   isOkAddNewLesson={addNewLessonCallback}/>
             }
         </>
     );

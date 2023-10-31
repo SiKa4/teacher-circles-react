@@ -22,15 +22,10 @@ export const App = observer(() => {
 
             const userInfo: { role: string, user_id: string } = cookies.user;
 
-            let user;
-            user = await apiRequest.getUserInfoById(userInfo.user_id);
+            const user = await apiRequest.getUserInfoById(userInfo.user_id);
             appStore.setUserInfo(user);
             setIsLoading(false);
         })();
-    }, []);
-
-    useEffect(() => {
-
     }, []);
 
     return (

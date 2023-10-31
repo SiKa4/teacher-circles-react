@@ -1,34 +1,47 @@
 import {observer} from 'mobx-react-lite';
 import styled, {css} from 'styled-components';
 import {HTMLAttributes, useEffect, useState} from 'react';
-import {sleep} from "../../untils/sleep.ts";
-import {closeIcon} from "../../assets/img.ts";
+import {closeIcon, iconCheckError} from "../../assets/img.ts";
 import {DropDownList} from "../drop_down_list/DropDownList.tsx";
 import {apiRequest} from "../../api_request/api-request.ts";
 import {appStore} from "../../data/stores/app.store.ts";
+import InputMask from 'react-input-mask';
+import {ModalMessageWindow} from "./ModalMessageWindow.tsx";
 
 type ModalCreateLesson = HTMLAttributes<HTMLDivElement> & {
     setCloseModal: (isClose: boolean) => void;
-    numberDayOfTheWeek: number
+    numberDayOfTheWeek: number,
+    isOkAddNewLesson: (isOk: boolean) => void;
 };
 
 export const ModalCreateLesson = observer(
-    ({setCloseModal, numberDayOfTheWeek}: ModalCreateLesson) => {
+    ({setCloseModal, numberDayOfTheWeek, isOkAddNewLesson}: ModalCreateLesson) => {
+        const [isOpenModalMessage, setIsOpenModalMessage] = useState(false);
         const [societys, setSocietys] = useState<{
-            id: number, name: String
+            id: number,
+            name: string
         }[] | null>(null);
 
         const [employes, setEmployes] = useState<{
-            id: number, name: String
+            id: number,
+            name: string
         }[] | null>(null);
 
-        const [selectedContentSociety, setSelectedContentSociety] = useState<{
-            id: number, name: String
+        const [selectedSociety, setSelectedContentSociety] = useState<{
+            id: number,
+            name: string
         } | null>(null);
 
-        const [selectedContentTeacher, setSelectedContentTeacher] = useState<{
-            id: number, name: String
+        const [selectedTeacher, setSelectedContentTeacher] = useState<{
+            id: number,
+            name: string
         } | null>(null);
+
+        const dayOfTheWeek = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС']
+
+        const [numberRoom, setNumberRoom] = useState(0);
+        const [timeStarted, setTimeStarted] = useState('');
+        const [isValidTimeStarted, setIsValidTimeStarted] = useState(true);
 
         useEffect(() => {
             (async () => {
@@ -54,7 +67,52 @@ export const ModalCreateLesson = observer(
             })();
         }, []);
 
-        const dayOfTheWeek = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС']
+        useEffect(() => {
+            isValidTime(timeStarted);
+        }, [timeStarted]);
+
+        const isValidTime = (time: string) => {
+            const timePattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
+
+            if (timePattern.test(time)) {
+
+                const [hours, minutes] = time.split(":");
+
+                const hoursNum = parseInt(hours, 10);
+                const minutesNum = parseInt(minutes, 10);
+
+                if (hoursNum >= 0 && hoursNum <= 23 && minutesNum >= 0 && minutesNum <= 59) {
+                    setIsValidTimeStarted(true);
+                    return;
+                }
+            }
+
+            setIsValidTimeStarted(false);
+        }
+
+        const createLessons = async () => {
+            if (!selectedSociety || !selectedTeacher
+                || !isValidTimeStarted || numberRoom == 0) {
+                setIsOpenModalMessage(true);
+                return;
+            }
+
+            const isOk = await apiRequest.createLesson({
+                room_number: numberRoom,
+                start_date: timeStarted,
+                week_day: numberDayOfTheWeek,
+                employee_id: selectedTeacher.id,
+                society_id: selectedSociety.id
+            });
+
+            if (!isOk) {
+                setIsOpenModalMessage(true);
+                return;
+            }
+
+            setCloseModal(false);
+            isOkAddNewLesson(true);
+        };
 
         return (
             <>
@@ -68,11 +126,21 @@ export const ModalCreateLesson = observer(
                             <WrapperPadding>
                                 <WrapperContent>
                                     <WrapperInput isFixedWidth={true}>
-                                        <InputName placeholder="Номер кабинета" type='number'></InputName>
+                                        <InputName placeholder="Номер кабинета"
+                                                   type='number'
+                                                   value={numberRoom}
+                                                   onChange={(e) => setNumberRoom(parseInt(e.target.value))}/>
                                         <DownInputSpan>Номер кабинета</DownInputSpan>
                                     </WrapperInput>
                                     <WrapperInput isFixedWidth={true}>
-                                        <InputName placeholder="Время начала"></InputName>
+                                        <InputMaskK
+                                            mask="99:99"
+                                            isValid={isValidTimeStarted}
+                                            maskPlaceholder="XX:XX"
+                                            placeholder="XX:XX"
+                                            value={timeStarted}
+                                            onChange={(e) => setTimeStarted(e.target.value)}
+                                        />
                                         <DownInputSpan>Время начала</DownInputSpan>
                                     </WrapperInput>
                                 </WrapperContent>
@@ -90,7 +158,7 @@ export const ModalCreateLesson = observer(
                                             <span>Отмена</span>
                                         </Btn>
                                         <Btn>
-                                            <span>Добавить</span>
+                                            <span onClick={() => createLessons()}>Добавить</span>
                                         </Btn>
                                     </ButtonWrapper>
                                 </WrapperInput>
@@ -100,6 +168,12 @@ export const ModalCreateLesson = observer(
                         </BodyModal>
                     </WrapperBody>
                 </Wrapper>
+                {isOpenModalMessage &&
+                    <ModalMessageWindow setCloseModal={setIsOpenModalMessage}
+                                        message={"Ошибка при создании. Попробуйте заполнить все поля."}
+                                        icon={iconCheckError}
+                                        isOpenModalMessage={true}/>
+                }
             </>
         );
     }
@@ -113,7 +187,9 @@ const WrapperContent = styled.div.attrs({className: 'wrapper-content'})`
   gap: 5px;
 `;
 
-const WrapperInput = styled.div<{ isFixedWidth?: boolean }>`
+const WrapperInput = styled.div<{
+    isFixedWidth?: boolean
+}>`
 
   ${({isFixedWidth}) => isFixedWidth && css`
     width: 90%;
@@ -170,8 +246,31 @@ const InputName = styled.input.attrs({className: 'input-name'})`
   }
 `;
 
-const InputNameMaxWidth = styled(InputName)`
-  width: 90%;
+const InputMaskK = styled(InputMask)<{
+    isValid: boolean
+}>`
+  border: 1px #79747e double;
+  height: 35px;
+  width: 80%;
+  background: #f6f6f8;
+  border-radius: 5px;
+  text-indent: 5px;
+  font-weight: 400;
+  font-size: 16px;
+  margin: auto;
+  display: block;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::placeholder {
+    color: var(--pressed-primary-btn);
+  }
+
+  ${({isValid}) => !isValid && css`
+    border: 1px red double;
+  `}
 `;
 
 const WrapperPadding = styled.div.attrs({className: 'wrapper-padding'})`

@@ -16,7 +16,7 @@ export const CircleBody = observer(() => {
     const [circle, setCircle] = useState<{
         hoursNumber: number,
         id: number,
-        name: String
+        name: string
     }[] | null>(null);
 
     useEffect(() => {
@@ -24,6 +24,8 @@ export const CircleBody = observer(() => {
     }, []);
 
     const getAllCircle = async () => {
+        if(!appStore.getUserInfo) return;
+
         const circles = await apiRequest.getAllSocietys(appStore.getUserInfo?.id!);
         setCircle(circles);
     };

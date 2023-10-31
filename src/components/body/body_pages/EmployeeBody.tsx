@@ -13,9 +13,9 @@ export const EmployeeBody = observer(() => {
     const [messageModelWindow, setMessageModalWindow] = useState('');
 
     const [employees, setEmployees] = useState<{
-        first_name: String,
-        last_name: String,
-        surname: String,
+        first_name: string,
+        last_name: string,
+        surname: string,
         id: number, id_role: number,
         password: string, username: string,
     }[] | null>(null);

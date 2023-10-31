@@ -2,23 +2,23 @@ import {HTMLAttributes, useState} from "react";
 import styled, {css} from "styled-components";
 
 type DropDownList = HTMLAttributes<HTMLDivElement> & {
-    contents: { id: number, name: String }[] | null,
-    textInit: String,
-    setContents: (content: { id: number, name: String }) => void,
+    contents: { id: number, name: string }[] | null,
+    textInit: string,
+    setContents: (content: { id: number, name: string }) => void,
 };
 
 export const DropDownList = ({ contents, textInit, setContents }: DropDownList) => {
-    const [textBtn, setTextBtn] = useState<String>(textInit);
+    const [textBtn, setTextBtn] = useState<string>(textInit);
     const [selectedContent, setSelectedContent] = useState<{
         id: number,
-        name: String
+        name: string
     } | null>(null);
 
     const [isOpen, setInOpen] = useState(false);
 
     const onSelectedDropDownList = (content: {
         id: number,
-        name: String
+        name: string
     }) => {
         setInOpen(false);
         setSelectedContent(content);
