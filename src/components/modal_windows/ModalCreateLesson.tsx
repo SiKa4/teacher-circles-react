@@ -3,6 +3,9 @@ import styled, {css} from 'styled-components';
 import {HTMLAttributes, useEffect, useState} from 'react';
 import {sleep} from "../../untils/sleep.ts";
 import {closeIcon} from "../../assets/img.ts";
+import {DropDownList} from "../drop_down_list/DropDownList.tsx";
+import {apiRequest} from "../../api_request/api-request.ts";
+import {appStore} from "../../data/stores/app.store.ts";
 
 type ModalCreateLesson = HTMLAttributes<HTMLDivElement> & {
     setCloseModal: (isClose: boolean) => void;
@@ -11,6 +14,46 @@ type ModalCreateLesson = HTMLAttributes<HTMLDivElement> & {
 
 export const ModalCreateLesson = observer(
     ({setCloseModal, numberDayOfTheWeek}: ModalCreateLesson) => {
+        const [societys, setSocietys] = useState<{
+            id: number, name: String
+        }[] | null>(null);
+
+        const [employes, setEmployes] = useState<{
+            id: number, name: String
+        }[] | null>(null);
+
+        const [selectedContentSociety, setSelectedContentSociety] = useState<{
+            id: number, name: String
+        } | null>(null);
+
+        const [selectedContentTeacher, setSelectedContentTeacher] = useState<{
+            id: number, name: String
+        } | null>(null);
+
+        useEffect(() => {
+            (async () => {
+                const array = await apiRequest.getAllSocietys(appStore.getUserInfo?.id!);
+
+                if (!array) return;
+
+                const newArray = array.map(item => {
+                    return {id: item.id, name: item.name};
+                });
+                setSocietys(newArray);
+            })();
+
+            (async () => {
+                const array = await apiRequest.getAllEmployee();
+
+                if (!array) return;
+
+                const newArray = array.map(item => {
+                    return {id: item.id, name: `${item.first_name} ${item.last_name} ${item.surname}`};
+                });
+                setEmployes(newArray);
+            })();
+        }, []);
+
         const dayOfTheWeek = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС']
 
         return (
@@ -34,10 +77,12 @@ export const ModalCreateLesson = observer(
                                     </WrapperInput>
                                 </WrapperContent>
 
-                                <InputNameMaxWidth placeholder="Время начала"/>
-                                <DownInputSpan>Время начала</DownInputSpan>
+                                <DropDownList contents={societys} textInit={'Выберите кружок'}
+                                              setContents={setSelectedContentSociety}/>
+                                <DownInputSpan>Кружок</DownInputSpan>
 
-                                <InputNameMaxWidth placeholder="Преподаватель"/>
+                                <DropDownList contents={employes} textInit={'Выберите преподавателя'}
+                                              setContents={setSelectedContentTeacher}/>
                                 <DownInputSpan>Время начала</DownInputSpan>
                                 <WrapperInput>
                                     <ButtonWrapper>
@@ -134,7 +179,6 @@ const WrapperPadding = styled.div.attrs({className: 'wrapper-padding'})`
 `;
 
 const Wrapper = styled.div.attrs({className: 'wrapper-modal-window'})``;
-
 
 
 const DownInputSpan = styled.span.attrs({className: 'down-input-span'})`
