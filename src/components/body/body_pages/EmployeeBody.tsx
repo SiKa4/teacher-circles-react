@@ -1,16 +1,20 @@
 import {observer} from "mobx-react-lite";
-import {changeIcon, iconCheckOk, plusIcon, removeBasketIcon} from "../../../assets/img.ts";
+import {changeIcon, iconCheckError, iconCheckOk, plusIcon, removeBasketIcon} from "../../../assets/img.ts";
 import styled from "styled-components";
 import {useEffect, useState} from "react";
 import {apiRequest} from "../../../api_request/api-request.ts";
 import {ModalAddNewEmployeeWindow} from "../../modal_windows/ModalAddNewEmployeeWindow.tsx";
 import {ModalMessageWindow} from "../../modal_windows/ModalMessageWindow.tsx";
 import {strings} from "../../../assets/strings/strings.ts";
+import {ModalDelete} from "../../modal_windows/ModalAllowDeleteObject.tsx";
 
 export const EmployeeBody = observer(() => {
     const [isOpenAddNewEmployee, setIsOpenAddNewEmployee] = useState(false);
     const [isOpenModalMessage, setIsOpenModalMessage] = useState(false);
     const [messageModelWindow, setMessageModalWindow] = useState('');
+    const [iconMessage, setIconMessage] = useState(iconCheckError);
+    const [isOpenModalDelete, setInOpenModalDelete] = useState(false);
+    const [selectedIdEmployee, setSelectedIdEmployeee] = useState<number | null>(null);
 
     const [employees, setEmployees] = useState<{
         first_name: string,
@@ -42,14 +46,24 @@ export const EmployeeBody = observer(() => {
     };
 
     const onClickDeleteEmployee = async (idEmployee: number) => {
-        const isOk = await apiRequest.deleteEmployeByid(idEmployee);
-
-        if (!isOk) setMessageModalWindow(strings.errorDeleteEmployee);
-        else setMessageModalWindow(strings.completeAddEmoloyee);
-
-        getAllEmployees();
-        setIsOpenModalMessage(true);
+        setSelectedIdEmployeee(idEmployee);
+        setInOpenModalDelete(true);
     };
+
+    const callbackDelete = async () => {
+        if (!selectedIdEmployee) return
+        const isOk = await apiRequest.deleteEmployeByid(selectedIdEmployee);
+        await getAllEmployees();
+
+        if (isOk) {
+            setMessageModalWindow('Пользователь успешно удален.')
+            setIconMessage(iconCheckOk);
+        } else {
+            setMessageModalWindow('Пользователь не был удален.')
+            setIconMessage(iconCheckError);
+        }
+        setIsOpenModalMessage(true);
+    }
 
     return (
         <>
@@ -96,8 +110,12 @@ export const EmployeeBody = observer(() => {
             {isOpenModalMessage &&
                 <ModalMessageWindow setCloseModal={setIsOpenModalMessage}
                                     message={messageModelWindow}
-                                    icon={iconCheckOk}
+                                    icon={iconMessage}
                                     isOpenModalMessage={true}/>}
+            {
+                isOpenModalDelete &&
+                <ModalDelete setCloseModal={setInOpenModalDelete} callBackDelete={callbackDelete}/>
+            }
         </>
 
     );

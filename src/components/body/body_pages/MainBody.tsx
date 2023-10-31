@@ -33,7 +33,7 @@ export const MainBody = observer(() => {
             {
                 data: [statistics?.totalAbsent, statistics?.totalVisits],
                 backgroundColor: ['#FF6384', '#36A2EB'],
-                hoverBackgroundColor: ['#FF6384', '#36A2EB'],
+                hoverBackgroundColor: ['rgb(255,73,112)', 'rgb(32,161,238)'],
             },
         ],
     };
@@ -44,7 +44,7 @@ export const MainBody = observer(() => {
             {
                 data: [statistics?.absentPercent, statistics?.attendancePercent],
                 backgroundColor: ['#FF6384', '#36A2EB'],
-                hoverBackgroundColor: ['#FF6384', '#36A2EB'],
+                hoverBackgroundColor: ['rgb(255,73,112)', 'rgb(32,161,238)'],
             },
         ],
     };

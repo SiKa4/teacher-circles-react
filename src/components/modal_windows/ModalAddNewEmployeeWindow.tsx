@@ -21,18 +21,6 @@ export const ModalAddNewEmployeeWindow = observer(
         const [login, setLogin] = useState('');
         const [password, setPassword] = useState('');
 
-        /*useEffect(() => {
-            if (isOpenModal) {
-                (async () => {
-                    setIsDowning(true);
-                    await sleep(1500);
-                    setIsDowning(false);
-                    await sleep(1000);
-                    setCloseModal(false);
-                })();
-            }
-        }, [isOpenModal]);*/
-
         const addNewEmployee = async () => {
             if (firstName == '' || lastName == '' || surname == '' || login == '' || password == '') {
                 setIsOpenModalMessage(true);

@@ -76,7 +76,7 @@ class ApiRequest {
                 return true;
             })
             .catch(() => {
-                return null;
+                return false;
             });
     }
 
