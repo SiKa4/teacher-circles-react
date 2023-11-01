@@ -18,10 +18,10 @@ export const StudentsBody = observer(() => {
 
     const [students, setStudents] = useState<{
         id: number,
-        surname: String,
-        first_name: String,
-        last_name: String,
-        birth_date: String
+        surname: string,
+        first_name: string,
+        last_name: string,
+        birth_date: string
     }[] | null>();
 
     useEffect(() => {

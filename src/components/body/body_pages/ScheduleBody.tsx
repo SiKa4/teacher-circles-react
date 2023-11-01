@@ -24,9 +24,9 @@ export const ScheduleBody = observer(() => {
         lessons: {
             id: number,
             room_number: number,
-            start_date: String,
+            start_date: string,
             week_day: number,
-            societyName: String,
+            societyName: string,
             employee_id: number
         }[]
     }[] | null>(null);

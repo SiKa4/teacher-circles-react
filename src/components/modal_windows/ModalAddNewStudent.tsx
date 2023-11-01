@@ -2,7 +2,6 @@ import {HTMLAttributes, useState} from "react";
 import {observer} from "mobx-react-lite";
 import {closeIcon, iconCheckError} from "../../assets/img.ts";
 import {ModalMessageWindow} from "./ModalMessageWindow.tsx";
-import {strings} from "../../assets/strings/strings.ts";
 import styled from "styled-components";
 import {apiRequest} from "../../api_request/api-request.ts";
 

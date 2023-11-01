@@ -72,18 +72,18 @@ export const ModalAddNewCircle = observer(
                         </BodyModal>
                     </WrapperBody>
                 </Wrapper>
-
                 {isOpenModalMessage &&
                     <ModalMessageWindow setCloseModal={setIsOpenModalMessage} message={strings.errorAddCircle}
                                         icon={iconCheckError}
-                                        isOpenModalMessage={true}/>}
+                                        isOpenModalMessage={true}/>
+                }
             </>
 
         );
     }
 );
 
-ModalAddNewCircle.displayName = 'ModalAddNewEmployeeWindow';
+ModalAddNewCircle.displayName = 'ModalAddNewCircle';
 
 const WrapperContent = styled.div.attrs({className: 'wrapper-content'})`
   padding: 20px 30px 20px 10px;

@@ -101,10 +101,10 @@ class ApiRequest {
                 const data = response.data.students;
                 return data as {
                     id: number,
-                    surname: String,
-                    first_name: String,
-                    last_name: String,
-                    birth_date: String
+                    surname: string,
+                    first_name: string,
+                    last_name: string,
+                    birth_date: string
                 }[];
             })
             .catch(() => {
@@ -150,9 +150,9 @@ class ApiRequest {
                     lessons: {
                         id: number,
                         room_number: number,
-                        start_date: String,
+                        start_date: string,
                         week_day: number,
-                        societyName: String,
+                        societyName: string,
                         employee_id: number
                     }[]
                 }[];
@@ -182,7 +182,12 @@ class ApiRequest {
                     totalSocieties: number,
                     totalTeachers: number,
                     attendancePercent: number,
-                    absentPercent: number
+                    absentPercent: number,
+                    dailyData: {
+                        date: string,
+                        visits: number,
+                        absences: number
+                    }[]
                 };
             })
             .catch(() => {
@@ -234,6 +239,44 @@ class ApiRequest {
             })
             .catch(() => {
                 return null;
+            });
+    }
+
+    public GetStudentsSociety(idCircle: number) {
+        return axios.get(this.mainUrl + `GetStudentsSociety/${idCircle}`)
+            .then(response => {
+                const data = response.data.students;
+                return data as {
+                    id: number,
+                    surname: string,
+                    first_name: string,
+                    last_name: string,
+                    birth_date: string
+                    isInSociety: boolean
+                }[];
+            })
+            .catch(() => {
+                return null;
+            });
+    }
+
+    public AddStydentInSociety(body: { student_id: number, society_id: number }) {
+        return axios.post(this.mainUrl + `AddStudent`, body)
+            .then(() => {
+                return true;
+            })
+            .catch(() => {
+                return false;
+            });
+    }
+
+    public DeleteStydentInSociety(body: { student_id: number, society_id: number }) {
+        return axios.post(this.mainUrl + `DeleteStudentSociety`, body)
+            .then(() => {
+                return true;
+            })
+            .catch(() => {
+                return false;
             });
     }
 }

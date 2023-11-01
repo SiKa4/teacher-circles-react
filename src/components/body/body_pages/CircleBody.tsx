@@ -8,12 +8,16 @@ import {ModalAddNewCircle} from "../../modal_windows/ModalAddNewCircle.tsx";
 import {strings} from "../../../assets/strings/strings.ts";
 import {appStore} from "../../../data/stores/app.store.ts";
 import {ModalDelete} from "../../modal_windows/ModalAllowDeleteObject.tsx";
+import {ModalAddStudentsInLesson} from "../../modal_windows/ModalAddStudentsInLesson.tsx";
 
 export const CircleBody = observer(() => {
     const [isOpenAddNewCircle, setIsOpenAddNewCircle] = useState(false);
     const [isOpenModalMessage, setIsOpenModalMessage] = useState(false);
     const [messageModelWindow, setMessageModalWindow] = useState('');
     const [isOpenModalDelete, setInOpenModalDelete] = useState(false);
+
+    const [isOpenModalAddStudentInLesson, setIsOpenModalAddStudentInLesson] = useState(false);
+
     const [selectedIdCircle, setSelectedIdCircle] = useState<number | null>(null);
     const [iconMessage, setIconMessage] = useState(iconCheckOk);
     const user = appStore.getUserInfo;
@@ -63,6 +67,11 @@ export const CircleBody = observer(() => {
         setIsOpenModalMessage(true);
     };
 
+    const onClickAddStudentsInCircle = (idCircle: number) => {
+        setSelectedIdCircle(idCircle);
+        setIsOpenModalAddStudentInLesson(true);
+    }
+
     return (
         <>
             <Wrapper>
@@ -73,8 +82,6 @@ export const CircleBody = observer(() => {
                     </Btn>
 
                 }
-
-
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -85,7 +92,6 @@ export const CircleBody = observer(() => {
                                 user?.id_role == 1 &&
                                 <>
                                     <TableHeaderCell></TableHeaderCell>
-
                                 </>
                             }
                             <TableHeaderCell></TableHeaderCell>
@@ -102,14 +108,16 @@ export const CircleBody = observer(() => {
                                     user?.id_role == 1 &&
                                     <>
                                         <TableCell><Icon src={changeIcon}/></TableCell>
-                                        <TableCell><Icon src={removeBasketIcon}
-                                                         onClick={() => onClickDeleteCircle(x.id)}/></TableCell>
+                                        <TableCell>
+                                            <Icon src={removeBasketIcon}
+                                                  onClick={() => onClickDeleteCircle(x.id)}/>
+                                        </TableCell>
                                     </>
 
                                 }
                                 {user?.id_role != 1 &&
                                     <TableCell>
-                                        <Icon src={changeIcon}/>
+                                        <Icon src={changeIcon} onClick={() => onClickAddStudentsInCircle(x.id)}/>
                                     </TableCell>}
                             </TableRow>
                         ))}
@@ -127,6 +135,10 @@ export const CircleBody = observer(() => {
             {
                 isOpenModalDelete &&
                 <ModalDelete setCloseModal={setInOpenModalDelete} callBackDelete={callbackDelete}/>
+            }
+            {
+                isOpenModalAddStudentInLesson &&
+                <ModalAddStudentsInLesson setCloseModal={setIsOpenModalAddStudentInLesson} idCircle={selectedIdCircle}/>
             }
         </>
     );
