@@ -9,11 +9,11 @@ type ModalAddStudentsInLesson = HTMLAttributes<HTMLDivElement> & {
     setCloseModal: (isClose: boolean) => void;
     idCircle: number | null;
     isLesson?: boolean;
+    callBackMessage?: (isOk: boolean) => void;
 };
 
-
 export const ModalAddStudentsInLesson = observer(
-    ({setCloseModal, idCircle, isLesson}: ModalAddStudentsInLesson) => {
+    ({setCloseModal, idCircle, isLesson, callBackMessage}: ModalAddStudentsInLesson) => {
         const [isOpenModalMessage, setIsOpenModalMessage] = useState(false);
 
         const [students, setStudents] = useState<{
@@ -52,6 +52,7 @@ export const ModalAddStudentsInLesson = observer(
 
             if(!isOk) {
                 setCloseModal(false);
+                callBackMessage(false);
                 return;
             }
 
@@ -86,8 +87,8 @@ export const ModalAddStudentsInLesson = observer(
             const answer = {lessonId: idCircle, studentVisits: transformedStudents.map(x => x.studentVisits)};
 
             const isOk = await apiRequest.AddVisit(answer);
-
             setCloseModal(false);
+            callBackMessage(isOk);
         };
 
         const onClickCheckBox = async (isChecked: boolean, idStudent: number) => {

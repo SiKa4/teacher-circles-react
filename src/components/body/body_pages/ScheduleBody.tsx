@@ -89,11 +89,28 @@ export const ScheduleBody = observer(() => {
         await getLessons();
     };
 
-    const setSelectedLessonId = (idLesson: number) => {
+    const setSelectedLessonId = async (idLesson: number) => {
         setSelectedLesson(idLesson);
-        if (user?.id_role != 1)
-            setIsOpenModalAddStudentInLesson(true);
+        if (user?.id_role != 1) {
+            const isOk = await apiRequest.GetStudentsInLesson(idLesson);
+            if (isOk) setIsOpenModalAddStudentInLesson(true);
+            else callBackMessage(false);
+        }
     }
+
+    const callBackMessage = (isOk: boolean) => {
+        if(isOk) {
+            setMessageModalWindow('Списки присутствующих обновлены.')
+            setMessageIcon(iconCheckOk);
+            setIsOpenModalMessage(true);
+        }
+        else {
+            setMessageModalWindow('Ошибка. Занятие либо прошло, либо еще не наступило.')
+            setMessageIcon(iconCheckError);
+        }
+
+        setIsOpenModalMessage(true);
+    };
 
     return (
         <>
@@ -188,7 +205,7 @@ export const ScheduleBody = observer(() => {
             {
                 isOpenModalAddStudentInLesson && selectedLesson &&
                 <ModalAddStudentsInLesson setCloseModal={setIsOpenModalAddStudentInLesson} idCircle={selectedLesson}
-                                          isLesson={true}/>
+                                          isLesson={true} callBackMessage={callBackMessage}/>
             }
         </>
     );
