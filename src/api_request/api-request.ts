@@ -1,7 +1,7 @@
 import axios from "axios";
 
 class ApiRequest {
-    mainUrl = "http://192.168.0.51:5001/api/";
+    mainUrl = "http://89.251.144.134:5001/api/";
 
     public getUserByLoginPassword(login: string, password: string) {
         const dataToSend = {
@@ -306,13 +306,41 @@ class ApiRequest {
             });
     }
 
-    public AddVisit(data: {lessonId: number, studentVisits: {studentId: number, visit: number}[]}) {
+    public AddVisit(data: { lessonId: number, studentVisits: { studentId: number, visit: number }[] }) {
         return axios.post(this.mainUrl + `AddVisit`, data)
             .then(() => {
                 return true;
             })
             .catch(() => {
                 return false;
+            });
+    }
+
+    public GetHistoryLessons(employeeId: number) {
+        return axios.get(this.mainUrl + `GetHistoryLessons/${employeeId}`)
+            .then(response => {
+                const data = response.data;
+                console.log(response);
+                return data as {
+                    history: {
+                        lesson: {
+                            id: number,
+                            room_number: number,
+                            start_date: string,
+                            societyName: string,
+                            latestVisitDate: string
+                        },
+                        studentVisits: {
+                            surname: string,
+                            first_name: string,
+                            last_name: string,
+                            visit: boolean
+                        }[],
+                    }[]
+                }
+            })
+            .catch(() => {
+                return null;
             });
     }
 }

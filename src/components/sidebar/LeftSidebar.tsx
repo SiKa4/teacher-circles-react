@@ -8,6 +8,7 @@ import {MainBody} from "../body/body_pages/MainBody.tsx";
 import {CircleBody} from "../body/body_pages/CircleBody.tsx";
 import {ScheduleBody} from "../body/body_pages/ScheduleBody.tsx";
 import {StudentsBody} from "../body/body_pages/StudentsBody.tsx";
+import {HistoryBody} from "../body/body_pages/HistoryBody.tsx";
 
 type LeftSidebar = HTMLAttributes<HTMLDivElement> & {
     setBodyContent: (bodyContent: JSX.Element | null) => void;
@@ -30,7 +31,8 @@ export const LeftSidebar = observer(({setBodyContent}: LeftSidebar) => {
             setCategory([
                 {name: 'Расписание', icon: homeIcon, component: <ScheduleBody/>},
                 {name: 'Студенты', icon: employeeIcon, component: <StudentsBody/>},
-                {name: 'Кружки', icon: scheduleIcon, component: <CircleBody/>}
+                {name: 'Кружки', icon: scheduleIcon, component: <CircleBody/>},
+                {name: 'История посещения', icon: calendarIcon, component: <HistoryBody/>}
             ]);
         }
     }, []);
