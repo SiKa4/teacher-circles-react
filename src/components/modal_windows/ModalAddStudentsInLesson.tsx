@@ -7,12 +7,13 @@ import {ModalMessageWindow} from "./ModalMessageWindow.tsx";
 
 type ModalAddStudentsInLesson = HTMLAttributes<HTMLDivElement> & {
     setCloseModal: (isClose: boolean) => void;
-    idCircle: number | null
+    idCircle: number | null;
+    isLesson?: boolean;
 };
 
 
 export const ModalAddStudentsInLesson = observer(
-    ({setCloseModal, idCircle}: ModalAddStudentsInLesson) => {
+    ({setCloseModal, idCircle, isLesson}: ModalAddStudentsInLesson) => {
         const [isOpenModalMessage, setIsOpenModalMessage] = useState(false);
 
         const [students, setStudents] = useState<{
@@ -24,13 +25,69 @@ export const ModalAddStudentsInLesson = observer(
             isInSociety: boolean
         }[] | null>();
 
+        const [studentsLesson, setStudentsLesson] = useState<{
+            student: {
+                id: number,
+                surname: string,
+                first_name: string,
+                last_name: string,
+                birth_date: string,
+            }
+            isInSociety: boolean
+        }[] | null>();
+
         useEffect(() => {
-            getStudents();
+            if (isLesson) getStudentsInLesson();
+            else getStudents();
         }, []);
 
         const getStudents = async () => {
             if (!idCircle) return;
             setStudents(await apiRequest.GetStudentsSociety(idCircle));
+        };
+
+        const getStudentsInLesson = async () => {
+            if (!idCircle) return;
+            const isOk = await apiRequest.GetStudentsInLesson(idCircle);
+
+            if(!isOk) {
+                setCloseModal(false);
+                return;
+            }
+
+            setStudentsLesson(await apiRequest.GetStudentsInLesson(idCircle));
+        };
+
+        const onClickCheckBoxLesson = async (isChecked: boolean, idStudent: number) => {
+            if (!studentsLesson || !idCircle) return;
+
+            const student = studentsLesson.find(x => x.student.id == idStudent);
+
+            if (!student) return;
+            student.isInSociety = isChecked;
+
+            const newArray = [...studentsLesson];
+            newArray[newArray.findIndex(x => x.student.id == idStudent)] = student;
+
+            setStudentsLesson(newArray);
+        };
+
+        const onClickSaveVisit = async () => {
+            if (!studentsLesson || !idCircle) return;
+
+            const transformedStudents = studentsLesson.map((student) => ({
+                studentVisits:
+                    {
+                        studentId: student.student.id,
+                        visit: student.isInSociety ? 1 : 0,
+                    },
+            }));
+
+            const answer = {lessonId: idCircle, studentVisits: transformedStudents.map(x => x.studentVisits)};
+
+            const isOk = await apiRequest.AddVisit(answer);
+
+            setCloseModal(false);
         };
 
         const onClickCheckBox = async (isChecked: boolean, idStudent: number) => {
@@ -100,6 +157,22 @@ export const ModalAddStudentsInLesson = observer(
                                                     </TableCell>
                                                 </TableRow>
                                             ))}
+                                            {studentsLesson && studentsLesson.map((x, i) => (
+                                                <TableRow key={i}>
+                                                    <TableCell>{x.student.id}</TableCell>
+                                                    <TableCell>{x.student.first_name}</TableCell>
+                                                    <TableCell>{x.student.last_name}</TableCell>
+                                                    <TableCell>{x.student.surname}</TableCell>
+                                                    <TableCell>{x.student.birth_date}</TableCell>
+                                                    <TableCell>
+                                                        <CheckBox type='checkbox'
+                                                                  checked={x.isInSociety}
+                                                                  onClick={(e) =>
+                                                                      onClickCheckBoxLesson(e.target!.checked! as boolean, x.student.id)}/>
+
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
                                         </TableBody>
                                     </Table>
                                 </div>
@@ -109,6 +182,10 @@ export const ModalAddStudentsInLesson = observer(
                                         <Btn onClick={() => setCloseModal(false)}>
                                             <span>Отмена</span>
                                         </Btn>
+                                        {isLesson &&
+                                            <Btn onClick={onClickSaveVisit}>
+                                                <span>Сохранить</span>
+                                            </Btn>}
                                     </ButtonWrapper>
                                 </WrapperInput>
                             </WrapperContent>
@@ -197,7 +274,7 @@ const ButtonWrapper = styled.div.attrs({className: 'buttons-wrapper'})`
 
 const Table = styled.table`
   border-collapse: collapse;
-  width: 90%;
+  width: 95%;
   margin: 0 auto 0;
 `;
 

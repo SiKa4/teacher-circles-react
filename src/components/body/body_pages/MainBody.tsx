@@ -109,7 +109,7 @@ export const MainBody = observer(() => {
                 </DivDiagramWrapper>
             </WrapperFlex>
             <DivDiagramWrapper2>
-                <Bar data={dataBarDiagram} options={options} height={'65%'}/>
+                <Bar data={dataBarDiagram} options={options} height={'62%'}/>
             </DivDiagramWrapper2>
         </Wrapper>
     );
@@ -174,7 +174,7 @@ const DivDiagramWrapper = styled.div.attrs({className: 'div-diagram-wrapper'})<{
 const DivDiagramWrapper2 = styled.div.attrs({className: 'div-diagram-wrapper2'})`
   border-radius: 20px;
   border: var(--primary-btn) 1px solid;
-  height: 30%;
+  height: fit-content;
 `;
 
 

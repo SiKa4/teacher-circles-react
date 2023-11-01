@@ -8,6 +8,7 @@ import {apiRequest} from "../../../api_request/api-request.ts";
 import {appStore} from "../../../data/stores/app.store.ts";
 import {ModalDelete} from "../../modal_windows/ModalAllowDeleteObject.tsx";
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
+import {ModalAddStudentsInLesson} from "../../modal_windows/ModalAddStudentsInLesson.tsx";
 
 export const ScheduleBody = observer(() => {
     const [isOpenModalMessage, setIsOpenModalMessage] = useState(false);
@@ -15,6 +16,7 @@ export const ScheduleBody = observer(() => {
     const [messageModelWindow, setMessageModalWindow] = useState('');
     const [messageIcon, setMessageIcon] = useState(iconCheckOk);
     const [isOpenModalDelete, setInOpenModalDelete] = useState(false);
+    const [isOpenModalAddStudentInLesson, setIsOpenModalAddStudentInLesson] = useState(false);
 
     const [numberDayOfTheWeek, setNumberDayOfTheWeek] = useState(0);
 
@@ -87,6 +89,12 @@ export const ScheduleBody = observer(() => {
         await getLessons();
     };
 
+    const setSelectedLessonId = (idLesson: number) => {
+        setSelectedLesson(idLesson);
+        if (user?.id_role != 1)
+            setIsOpenModalAddStudentInLesson(true);
+    }
+
     return (
         <>
             <DragDropContext onDragEnd={onDragEnd}>
@@ -94,7 +102,7 @@ export const ScheduleBody = observer(() => {
                     <WrapperContent>
                         {dayOfTheWeek.map((day, dayIndex) => (
                             <Droppable droppableId={`${dayIndex}`} key={dayIndex}
-                                       isDropDisabled={!getLessonsInWeekDay(dayIndex + 1)} >
+                                       isDropDisabled={!getLessonsInWeekDay(dayIndex + 1)}>
                                 {(provided) => (
                                     <DayOfTheWeek ref={provided.innerRef}>
                                         <DivWeekWrapper isBackgroundColor={true}>
@@ -102,7 +110,7 @@ export const ScheduleBody = observer(() => {
                                         </DivWeekWrapper>
                                         <WrapperContentWeek>
                                             {getLessonsInWeekDay(dayIndex + 1) &&
-                                                getLessonsInWeekDay(dayIndex + 1)!.map((lesson, lessonIndex) => (
+                                                getLessonsInWeekDay(dayIndex + 1)!.map((lesson) => (
                                                     <Draggable
                                                         key={`${lesson.id}`}
                                                         draggableId={`${lesson.id}`}
@@ -112,9 +120,8 @@ export const ScheduleBody = observer(() => {
                                                         {(provided, snapshot) => (
                                                             <DivWeekWrapper
                                                                 key={`${lesson.id}`}
-                                                                isActiveWeekLesson={selectedLesson !== lesson.id}
-                                                                onClick={user?.id_role == 1 ? () => setSelectedLesson(lesson.id) : () => {
-                                                                }}
+                                                                isActiveWeekLesson={user?.id_role != 1 || selectedLesson !== lesson.id}
+                                                                onClick={() => setSelectedLessonId(lesson.id)}
                                                                 isOpen={selectedLesson === lesson.id}
                                                                 ref={provided.innerRef}
                                                                 {...provided.draggableProps}
@@ -129,7 +136,7 @@ export const ScheduleBody = observer(() => {
                                                                 <SpanTime>Время: {lesson.start_date}</SpanTime>
                                                                 <SpanRoom>№
                                                                     кабинета: {lesson.room_number}</SpanRoom>
-                                                                {selectedLesson === lesson.id && (
+                                                                {user?.id_role == 1 && selectedLesson === lesson.id && (
                                                                     <div style={{display: 'flex', gap: '20px'}}>
                                                                         <Icon src={changeIcon} isHovered={true}/>
                                                                         <Icon src={removeBasketIcon}
@@ -177,6 +184,11 @@ export const ScheduleBody = observer(() => {
             {
                 isOpenModalDelete &&
                 <ModalDelete setCloseModal={setInOpenModalDelete} callBackDelete={callbackDelete}/>
+            }
+            {
+                isOpenModalAddStudentInLesson && selectedLesson &&
+                <ModalAddStudentsInLesson setCloseModal={setIsOpenModalAddStudentInLesson} idCircle={selectedLesson}
+                                          isLesson={true}/>
             }
         </>
     );

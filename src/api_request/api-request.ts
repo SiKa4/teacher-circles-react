@@ -260,7 +260,10 @@ class ApiRequest {
             });
     }
 
-    public AddStydentInSociety(body: { student_id: number, society_id: number }) {
+    public AddStydentInSociety(body: {
+        student_id: number,
+        society_id: number
+    }) {
         return axios.post(this.mainUrl + `AddStudent`, body)
             .then(() => {
                 return true;
@@ -270,8 +273,41 @@ class ApiRequest {
             });
     }
 
-    public DeleteStydentInSociety(body: { student_id: number, society_id: number }) {
+    public DeleteStydentInSociety(body: {
+        student_id: number,
+        society_id: number
+    }) {
         return axios.post(this.mainUrl + `DeleteStudentSociety`, body)
+            .then(() => {
+                return true;
+            })
+            .catch(() => {
+                return false;
+            });
+    }
+
+    public GetStudentsInLesson(idLesson: number) {
+        return axios.get(this.mainUrl + `GetStudents/${idLesson}`)
+            .then(response => {
+                const data = response.data.students;
+                return data as {
+                    student: {
+                        id: number,
+                        surname: string,
+                        first_name: string,
+                        last_name: string,
+                        birth_date: string,
+                    }
+                    isInSociety: boolean
+                }[];
+            })
+            .catch(() => {
+                return null;
+            });
+    }
+
+    public AddVisit(data: {lessonId: number, studentVisits: {studentId: number, visit: number}[]}) {
+        return axios.post(this.mainUrl + `AddVisit`, data)
             .then(() => {
                 return true;
             })

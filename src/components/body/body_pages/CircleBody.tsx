@@ -138,7 +138,7 @@ export const CircleBody = observer(() => {
             }
             {
                 isOpenModalAddStudentInLesson &&
-                <ModalAddStudentsInLesson setCloseModal={setIsOpenModalAddStudentInLesson} idCircle={selectedIdCircle}/>
+                <ModalAddStudentsInLesson setCloseModal={setIsOpenModalAddStudentInLesson} idCircle={selectedIdCircle} />
             }
         </>
     );
