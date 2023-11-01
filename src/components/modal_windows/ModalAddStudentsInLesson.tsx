@@ -50,7 +50,7 @@ export const ModalAddStudentsInLesson = observer(
             if (!idCircle) return;
             const isOk = await apiRequest.GetStudentsInLesson(idCircle);
 
-            if(!isOk) {
+            if (!isOk && callBackMessage) {
                 setCloseModal(false);
                 callBackMessage(false);
                 return;
@@ -88,6 +88,9 @@ export const ModalAddStudentsInLesson = observer(
 
             const isOk = await apiRequest.AddVisit(answer);
             setCloseModal(false);
+
+            if (!callBackMessage) return;
+
             callBackMessage(isOk);
         };
 
@@ -152,8 +155,8 @@ export const ModalAddStudentsInLesson = observer(
                                                     <TableCell>
                                                         <CheckBox type='checkbox'
                                                                   checked={x.isInSociety}
-                                                                  onClick={(e) =>
-                                                                      onClickCheckBox(e.target!.checked! as boolean, x.id)}/>
+                                                                  onChange={(e) =>
+                                                                      onClickCheckBox(e.target.checked as boolean, x.id)}/>
 
                                                     </TableCell>
                                                 </TableRow>
@@ -168,8 +171,8 @@ export const ModalAddStudentsInLesson = observer(
                                                     <TableCell>
                                                         <CheckBox type='checkbox'
                                                                   checked={x.isInSociety}
-                                                                  onClick={(e) =>
-                                                                      onClickCheckBoxLesson(e.target!.checked! as boolean, x.student.id)}/>
+                                                                  onChange={(e) =>
+                                                                      onClickCheckBoxLesson(e.target.checked as boolean, x.student.id)}/>
 
                                                     </TableCell>
                                                 </TableRow>

@@ -138,7 +138,7 @@ export const ModalCreateLesson = observer(
                                             maskPlaceholder="XX:XX"
                                             placeholder="XX:XX"
                                             value={timeStarted}
-                                            isValid={isValidTimeStarted}
+                                            {...{isValid: isValidTimeStarted}}
                                             onChange={(e) => setTimeStarted(e.target.value)}
                                         />
                                         <DownInputSpan>Время начала</DownInputSpan>
